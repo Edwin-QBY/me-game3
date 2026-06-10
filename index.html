@@ -3,33 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>高維修仙數據演武場 - 42馬赫遁術與精確禦力版</title>
+    <title>高維修仙數據演武場 - 完整設定保留版</title>
     <style>
         body {
             margin: 0; padding: 15px;
-            background-color: #08080c; color: #fff;
+            background-color: #06060a; color: #fff;
             font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
             display: flex; flex-direction: column; align-items: center;
         }
         h1 { margin: 0; color: #00ffcc; text-shadow: 0 0 10px rgba(0,255,204,0.4); font-size: 22px; }
         
         .timer-container {
-            display: flex; gap: 20px; margin: 8px 0;
-            background: #11111e; padding: 6px 15px; border-radius: 6px;
-            border: 1px solid #334; font-family: monospace; font-size: 13px;
+            display: flex; gap: 20px; margin: 6px 0;
+            background: #10101a; padding: 5px 15px; border-radius: 6px;
+            border: 1px solid #2d2d40; font-family: monospace; font-size: 13px;
         }
-        .t-real { color: #ffad33; font-weight: bold; }
         .t-sim { color: #00ffff; font-weight: bold; }
 
         #control-panel {
-            background-color: #12121a; padding: 12px; border-radius: 8px;
-            box-shadow: 0 4px 25px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 10px;
-            width: 100%; max-width: 1050px; margin-bottom: 10px; border: 1px solid #232335;
+            background-color: #111118; padding: 12px; border-radius: 8px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 8px;
+            width: 100%; max-width: 1050px; margin-bottom: 10px; border: 1px solid #222235;
         }
         .faction-container { display: flex; gap: 12px; }
         .faction-box {
-            flex: 1; padding: 8px; border-radius: 6px; background: #181824;
-            display: flex; flex-direction: column; gap: 5px; border-top: 4px solid #fff;
+            flex: 1; padding: 8px; border-radius: 6px; background: #161622;
+            display: flex; flex-direction: column; gap: 6px; border-top: 4px solid #fff;
         }
         .f-mortal { border-top-color: #888888; }
         .f-lianqi { border-top-color: #4dff4d; }
@@ -39,24 +38,25 @@
         
         .row { display: flex; align-items: center; justify-content: space-between; font-size: 11px; }
         input[type="number"] { width: 55px; padding: 2px; border-radius: 4px; border: none; background: #050508; color: #fff; text-align: center; }
-        select { padding: 2px; border-radius: 4px; background: #050508; color: #00ffcc; border: none; font-size: 11px; }
+        select { padding: 3px; border-radius: 4px; background: #050508; color: #00ffcc; border: none; font-size: 11px; }
         
         .global-settings {
             display: flex; justify-content: space-between; align-items: center;
-            background: #0b0b12; padding: 6px; border-radius: 6px; border: 1px dashed #445;
+            background: #09090f; padding: 8px; border-radius: 6px; border: 1px dashed #3a3a50;
         }
         .setting-group { display: flex; align-items: center; gap: 12px; font-size: 12px; }
+        .cw-label { color: #ff3366; font-weight: bold; display: flex; align-items: center; gap: 5px; cursor: pointer; }
 
         #startBtn {
             background: linear-gradient(135deg, #00ffcc, #0077ff); color: #000;
-            font-weight: bold; border: none; padding: 6px 18px; border-radius: 5px;
+            font-weight: bold; border: none; padding: 6px 20px; border-radius: 5px;
             cursor: pointer; font-size: 13px; transition: all 0.2s;
         }
         #startBtn:hover { transform: scale(1.02); box-shadow: 0 0 15px rgba(0,255,204,0.5); }
         
-        canvas { background-color: #030305; border: 2px solid #1a1a26; border-radius: 6px; }
+        canvas { background-color: #020204; border: 2px solid #1a1a26; border-radius: 6px; }
         #log-panel {
-            margin-top: 5px; background: #08080f; padding: 6px; border-radius: 6px;
+            margin-top: 5px; background: #05050a; padding: 6px; border-radius: 6px;
             width: 100%; max-width: 1030px; height: 95px; overflow-y: auto;
             font-family: monospace; font-size: 11px; color: #a4e3e6; border: 1px solid #151522;
         }
@@ -67,52 +67,59 @@
     <h1>高維修仙戰鬥模擬器</h1>
     
     <div class="timer-container">
-        <div>🖥️ 觀測物理外設步長: <span id="frameRateDisplay">60 fps</span></div>
-        <div class="t-sim">⏱️ 修仙界真實戰鬥逝去時間: <span id="simTimeDisplay">0.000000</span> 秒</div>
+        <div>👁️ 神識慢放觀測中</div>
+        <div class="t-sim">⏱️ 修仙界真實逝去時間: <span id="simTimeDisplay">0.000000</span> 秒</div>
     </div>
 
     <div id="control-panel">
         <div class="faction-container">
             <div class="faction-box f-mortal">
                 <h3>凡人 <span class="eval">評價：肉體凡胎</span></h3>
-                <div class="row"><label>數量：</label><input type="number" id="mortalCount" value="0"></div>
-                <div class="row"><label>移動速度：</label><span>6 - 11 m/s</span></div>
-                <div class="row"><label>最大防禦：</label><span>自重 2.2 倍</span></div>
+                <div class="row"><label>數量：</label><input type="number" id="mortalCount" value="2"></div>
+                <div class="row"><label>陣營：</label>
+                    <select id="mortalTeam"><option value="A">天道盟 (A)</option><option value="B">魔道宗 (B)</option><option value="C" selected>散修 (C)</option></select>
+                </div>
+                <div class="row"><label>敏捷：</label><span>6 - 11 m/s</span></div>
             </div>
             <div class="faction-box f-lianqi">
                 <h3>煉氣期1-10層 <span class="eval">評價：玻璃大砲</span></h3>
                 <div class="row"><label>數量：</label><input type="number" id="lianqiCount" value="2"></div>
-                <div class="row"><label>移動速度：</label><span>140 - 340 m/s</span></div>
-                <div class="row"><label>靈氣護體：</label><span>280g TNT / 100次</span></div>
+                <div class="row"><label>陣營：</label>
+                    <select id="lianqiTeam"><option value="A" selected>天道盟 (A)</option><option value="B">魔道宗 (B)</option><option value="C">獨立 (C)</option></select>
+                </div>
+                <div class="row"><label>護體：</label><span>280g TNT / 100次</span></div>
             </div>
             <div class="faction-box f-zhuji">
                 <h3>築基初-後期 <span class="eval">評價：你很快</span></h3>
                 <div class="row"><label>數量：</label><input type="number" id="zhujiCount" value="2"></div>
-                <div class="row"><label>飛行/遁術：</label><span>21馬赫 / 42馬赫</span></div>
-                <div class="row"><label>真元護盾：</label><span>3.65噸 TNT / 900次</span></div>
+                <div class="row"><label>陣營：</label>
+                    <select id="zhujiTeam"><option value="A">天道盟 (A)</option><option value="B" selected>魔道宗 (B)</option><option value="C">獨立 (C)</option></select>
+                </div>
+                <div class="row"><label>遁術：</label><span>飛行21M / 遁術42M</span></div>
             </div>
         </div>
 
         <div class="global-settings">
             <div class="setting-group">
-                <label>戰場寬度(米)：</label><input type="number" id="mapWidth" value="1100" min="600" max="1600">
-                <label>高度(米)：</label><input type="number" id="mapHeight" value="500" min="400" max="900">
-                <label>神識觀測速度：</label>
+                <label>戰場寬(米)：</label><input type="number" id="mapWidth" value="1100" min="600" max="1600">
+                <label>高(米)：</label><input type="number" id="mapHeight" value="500" min="400" max="900">
+                <label>戰鬥速度：</label>
                 <select id="timeScale">
-                    <option value="0.1">0.1x 慢速解析神識殘影</option>
-                    <option value="0.5">0.5x 慢速觀戰</option>
-                    <option value="1.0" selected>1.0x 真實修仙界流速</option>
-                    <option value="3.0">3.0x 瞬息抹殺</option>
+                    <option value="0.05">0.05x 究極神識慢放</option>
+                    <option value="0.2">0.2x 慢速解析身法</option>
+                    <option value="1.0" selected>1.0x 真實流速</option>
+                    <option value="3.0">3.0x 瞬息博弈</option>
                 </select>
             </div>
             <div class="setting-group">
+                <label class="cw-label"><input type="checkbox" id="intraRankCombat" checked> 開啟同境界生死內戰</label>
                 <button id="startBtn">神識凝聚·開戰！</button>
             </div>
         </div>
     </div>
 
     <canvas id="arena" width="1100" height="500"></canvas>
-    <div id="log-panel">=== 天道演武演算法已重構：高頻環繞身法、42馬赫側向閃避與硬核數據防禦已精確配置 ===</div>
+    <div id="log-panel">=== 演武場就緒：包含自訂陣營、同境界內戰、42馬赫側閃與高頻環繞身法 ===</div>
 
     <script>
         const canvas = document.getElementById('arena');
@@ -124,42 +131,42 @@
         let entities = []; let projectiles = []; let particles = []; let floatingTexts = [];
         let gameActive = false;
         
-        // 核心動態時間步長設定：1秒劃分為 10000 個微步，確保幾十馬赫超高速移動不穿牆、閃避精確
-        const SIM_DT = 0.0001; 
+        const SIM_DT = 0.0001; // 高精度子步
         let totalSimulatedTime = 0;
         let speedAccumulator = 0;
 
-        // 【精確對齊用戶給定數據設定】 1像素 = 1米
         const DATA_CONFIG = {
             mortal: {
                 name: '凡人', color: '#888888', radius: 6,
                 bodyArmor: 0.002, speed: 9, maxShieldTnt: 0, maxShieldHits: 0,
-                attackCd: 1.0, range: 12, dmg: 0.0001, spellSpeed: 10
+                attackCd: 1.2, range: 15, dmg: 0.0001, spellSpeed: 10
             },
             lianqi: {
                 name: '煉氣修士', color: '#4dff4d', radius: 9,
-                bodyArmor: 0.12, // 肉身抗 120g TNT
-                speed: 340,      // 敏捷最高 340 m/s
-                maxShieldTnt: 0.28, // 靈氣護體抗 280g TNT
-                maxShieldHits: 100, // 完全承受 100次 傷害
-                attackCd: 0.35, range: 450, 
-                dmg: 3.5,        // 掌握五行法術威力 1-5kg TNT (取平均 3.5kg)
-                spellSpeed: 1020, // 速度 2-4馬赫 (取3馬赫 1020m/s)
-                blastRadius: 50, fuseRadius: 20, dodgeDist: 120
+                bodyArmor: 0.12, // 120g TNT
+                speed: 340,      // 340 m/s
+                maxShieldTnt: 0.28, // 280g TNT
+                maxShieldHits: 100, // 100次承受
+                attackCd: 0.4, range: 450, 
+                dmg: 3.5,        // 3.5kg TNT
+                spellSpeed: 1020, // 3馬赫
+                blastRadius: 60, fuseRadius: 20, dodgeDist: 150
             },
             zhuji: {
                 name: '築基大修', color: '#ff33cc', radius: 13,
-                bodyArmor: 150,  // 肉身抗 50-200kg TNT (取150kg)
-                speed: 7140,     // 飛行 21馬赫 (約7140m/s)
-                escapeSpeed: 14280, // 遁術 42馬赫 (14280m/s)
-                maxShieldTnt: 3650, // 真元護盾抗 3.65噸 TNT (=3650kg)
-                maxShieldHits: 900, // 真元護盾完全承受 900次 傷害
-                attackCd: 0.5, range: 900,
-                dmg: 5000,       // 掌握法術威力 5噸 TNT (=5000kg)
-                spellSpeed: 17000, // 速度 50馬赫 (=17000m/s)
-                blastRadius: 150, fuseRadius: 45, dodgeDist: 350
+                bodyArmor: 150,  // 150kg TNT
+                speed: 7140,     // 21馬赫飛行
+                escapeSpeed: 14280, // 42馬赫遁術
+                maxShieldTnt: 3650, // 3.65噸 TNT (=3650kg)
+                maxShieldHits: 900, // 900次承受
+                attackCd: 0.6, range: 900,
+                dmg: 5000,       // 5噸 TNT (=5000kg)
+                spellSpeed: 17000, // 50馬赫
+                blastRadius: 160, fuseRadius: 45, dodgeDist: 400
             }
         };
+
+        const TEAM_COLORS = { A: '#00ccff', B: '#ff3333', C: '#ffff33' };
 
         function addLog(simTime, text) {
             logPanel.innerHTML += `<div>[${simTime.toFixed(5)}s] ${text}</div>`;
@@ -173,111 +180,122 @@
                 this.radius = conf.radius;
                 this.speed = conf.speed;
                 
-                // 防禦三維指標精確初始化
                 this.shieldTnt = conf.maxShieldTnt;
                 this.shieldHits = conf.maxShieldHits;
                 this.bodyAlive = true;
-                this.hpPercent = 1.0; // 用百分比表現肉身完好度
+                this.hpPercent = 1.0; 
                 
                 this.attackCdTimer = Math.random() * 0.2;
                 this.orbitDirection = Math.random() > 0.5 ? 1 : -1;
                 this.hasReborn = false;
+                
                 this.isDodging = false;
+                this.wasDodgingBefore = false; // 用於控制文字不重複堆疊
                 this.dodgeX = 0; this.dodgeY = 0;
             }
 
             update(dt) {
                 if (this.attackCdTimer > 0) this.attackCdTimer -= dt;
 
-                // 1. 強制物理排斥（徹底粉碎黏連Bug）
+                let intraRank = document.getElementById('intraRankCombat').checked;
+
+                // 1. 強大斥力修正：徹底防止黏在一起同向移動
                 for (let ent of entities) {
                     if (ent.id === this.id) continue;
                     let d = Math.hypot(ent.x - this.x, ent.y - this.y);
-                    let minDist = this.radius + ent.radius + 35; // 保持戰術安全間距
+                    let minDist = this.radius + ent.radius + 60; // 擴大安全身法拉扯間距
                     if (d < minDist) {
-                        let push = (minDist - d) * 0.5;
+                        let push = (minDist - d) * 0.8;
                         let ang = Math.atan2(this.y - ent.y, this.x - ent.x);
                         this.x += Math.cos(ang) * push;
                         this.y += Math.sin(ang) * push;
                     }
                 }
 
-                // 2. 探測敵方威脅與「X馬赫身法避彈」
+                // 2. 探測敵方正面彈頭進行閃避
                 let targetProj = null; let minDistProj = Infinity;
                 let conf = DATA_CONFIG[this.type];
 
                 if (this.type !== 'mortal') {
                     for (let p of projectiles) {
-                        if (p.attackerId === this.id) continue; // 忽略自己發射的
+                        let isEnemyProj = (p.attackerTeam !== this.team) || (intraRank && p.attackerType === this.type && p.attackerId !== this.id);
+                        if (!isEnemyProj) continue;
+
                         let dp = Math.hypot(p.x - this.x, p.y - this.y);
                         if (dp < conf.dodgeDist && dp < minDistProj) {
-                            // 點積計算：判斷飛彈是否朝向自己
                             let pVel = Math.hypot(p.vx, p.vy);
                             if (pVel > 0) {
                                 let dot = ((this.x - p.x)*p.vx + (this.y - p.y)*p.vy) / (dp * pVel);
-                                if (dot > 0.4) { targetProj = p; minDistProj = dp; }
+                                if (dot > 0.3) { targetProj = p; minDistProj = dp; }
                             }
                         }
                     }
                 }
 
-                // 3. 執行閃避或常規環繞走位
+                // 3. 身法變向與交錯環繞走位
                 if (targetProj) {
                     this.isDodging = true;
-                    // 計算威脅彈道的垂直方向
                     let pVel = Math.hypot(targetProj.vx, targetProj.vy);
                     let perpX = -targetProj.vy / pVel;
                     let perpY = targetProj.vx / pVel;
-                    // 決定橫移方向
                     let side = ((this.x - targetProj.x)*perpX + (this.y - targetProj.y)*perpY > 0) ? 1 : -1;
                     
-                    // 築基大修在此處爆發 42馬赫遁術 進行瘋狂變向側閃！
+                    // 爆發極限遁術（築基 42 馬赫超神速急轉）
                     let currentSpeed = this.type === 'zhuji' ? conf.escapeSpeed : conf.speed;
                     this.dodgeX = perpX * side * currentSpeed * dt;
                     this.dodgeY = perpY * side * currentSpeed * dt;
                     this.x += this.dodgeX;
                     this.y += this.dodgeY;
 
-                    // 釋放殘影特效粒子
-                    if (Math.random() < 0.2) {
+                    // 觸發閃避飄字（在 60fps 層正常渲染，不會在子步裡消失）
+                    if (!this.wasDodgingBefore) {
+                        this.wasDodgingBefore = true;
+                        floatingTexts.push({
+                            x: this.x, y: this.y - 25,
+                            text: this.type === 'zhuji' ? "⚡ 42M 遁術殘影" : "💨 340M/S 閃避",
+                            life: 35, color: this.type === 'zhuji' ? '#ff33cc' : '#4dff4d'
+                        });
+                    }
+
+                    // 釋放殘影粒子
+                    if (Math.random() < 0.15) {
                         particles.push({
                             x: this.x, y: this.y, radius: this.radius,
                             color: this.type === 'zhuji' ? 'rgba(255, 51, 204, 0.4)' : 'rgba(77, 255, 77, 0.4)',
-                            life: 15, isAfterImage: true
+                            life: 12, isAfterImage: true
                         });
                     }
                 } else {
                     this.isDodging = false;
-                    // 常規戰術走位：切換至【高頻交錯環繞模式】而非對撞
+                    this.wasDodgingBefore = false;
+
+                    // 高頻交錯拉扯 AI（不對撞，保持弧形走位）
                     let enemy = this.findNearestEnemy();
                     if (enemy) {
                         let ang = Math.atan2(enemy.y - this.y, enemy.x - this.x);
                         let dist = Math.hypot(enemy.x - this.x, enemy.y - this.y);
-
-                        // 試圖維持在最大射程的 75% 處進行拉扯
-                        let idealDist = conf.range * 0.75;
+                        let idealDist = conf.range * 0.7;
                         let moveAngle = ang;
                         
-                        if (dist > idealDist + 40) {
-                            moveAngle = ang + (Math.PI / 4) * this.orbitDirection; // 斜向切入
-                        } else if (dist < idealDist - 40) {
-                            moveAngle = ang + (Math.PI * 0.75) * this.orbitDirection; // 斜向撤退
+                        if (dist > idealDist + 50) {
+                            moveAngle = ang + (Math.PI / 3.5) * this.orbitDirection; 
+                        } else if (dist < idealDist - 50) {
+                            moveAngle = ang + (Math.PI * 0.8) * this.orbitDirection; 
                         } else {
-                            moveAngle = ang + (Math.PI / 2) * this.orbitDirection; // 純橫向環繞走位
+                            moveAngle = ang + (Math.PI / 2) * this.orbitDirection; // 純橫向圓弧拉扯
                         }
 
                         this.x += Math.cos(moveAngle) * this.speed * dt;
                         this.y += Math.sin(moveAngle) * this.speed * dt;
 
-                        if (Math.random() < 0.005) this.orbitDirection *= -1; // 隨機變更環繞軌跡
+                        if (Math.random() < 0.005) this.orbitDirection *= -1; 
                     }
                 }
 
-                // 地圖鎖死限制
                 this.x = Math.max(this.radius, Math.min(canvas.width - this.radius, this.x));
                 this.y = Math.max(this.radius, Math.min(canvas.height - this.radius, this.y));
 
-                // 4. 進攻邏輯
+                // 4. 進攻
                 let enemy = this.findNearestEnemy();
                 if (enemy && this.attackCdTimer <= 0) {
                     let dist = Math.hypot(enemy.x - this.x, enemy.y - this.y);
@@ -289,11 +307,17 @@
 
             findNearestEnemy() {
                 let nearest = null; let minDist = Infinity;
+                let intraRank = document.getElementById('intraRankCombat').checked;
+
                 for (let ent of entities) {
                     if (ent.id === this.id) continue;
-                    // 同階即死敵（內戰解鎖）
-                    let d = Math.hypot(ent.x - this.x, ent.y - this.y);
-                    if (d < minDist) { minDist = d; nearest = ent; }
+                    
+                    // 判定敵對狀態（不同陣營，或者同境界內戰開啟且境界相同）
+                    let isEnemy = (ent.team !== this.team) || (intraRank && ent.type === this.type);
+                    if (isEnemy) {
+                        let d = Math.hypot(ent.x - this.x, ent.y - this.y);
+                        if (d < minDist) { minDist = d; nearest = ent; }
+                    }
                 }
                 return nearest;
             }
@@ -306,29 +330,29 @@
                 if (this.type === 'mortal') {
                     target.takeDamage(conf.dmg, 0, 1, this);
                 } else if (this.type === 'lianqi') {
-                    // 隨機一次發射 1-3 個法術
-                    let count = Math.floor(Math.random() * 3) + 1;
+                    let count = Math.floor(Math.random() * 3) + 1; // 一次1~3發
                     for (let i = 0; i < count; i++) {
-                        let spread = (Math.random() - 0.5) * 0.2;
+                        let spread = (Math.random() - 0.5) * 0.15;
                         projectiles.push({
                             x: this.x, y: this.y,
                             vx: Math.cos(ang + spread) * conf.spellSpeed,
                             vy: Math.sin(ang + spread) * conf.spellSpeed,
-                            damage: conf.dmg, color: '#4dff4d', radius: 4, attackerId: this.id, attackerType: this.type,
+                            damage: conf.dmg, color: '#4dff4d', radius: 4, 
+                            attackerId: this.id, attackerType: this.type, attackerTeam: this.team,
                             fuseRadius: conf.fuseRadius, blastRadius: conf.blastRadius
                         });
                     }
                 } else if (this.type === 'zhuji') {
-                    // 靈活掌控法術，一次發射 1-12 個 50馬赫 五行真元巨弩
-                    let count = Math.floor(Math.random() * 12) + 1;
-                    addLog(totalSimulatedTime, `⚡ 【築基神通】 大修靈活控火，瞬間爆發出 ${count} 股真元巨弩（50馬赫）！`);
+                    let count = Math.floor(Math.random() * 12) + 1; // 一次1~12發
+                    addLog(totalSimulatedTime, `⚡ [神通爆發] 築基大修(ID:${this.id}) 控形化弩，爆射出 ${count} 股 50馬赫 真元大彈！`);
                     for (let i = 0; i < count; i++) {
-                        let spread = (Math.random() - 0.5) * 0.35;
+                        let spread = (Math.random() - 0.5) * 0.3;
                         projectiles.push({
                             x: this.x, y: this.y,
                             vx: Math.cos(ang + spread) * conf.spellSpeed,
                             vy: Math.sin(ang + spread) * conf.spellSpeed,
-                            damage: conf.dmg, color: '#ff33cc', radius: 5, attackerId: this.id, attackerType: this.type,
+                            damage: conf.dmg, color: '#ff33cc', radius: 5, 
+                            attackerId: this.id, attackerType: this.type, attackerTeam: this.team,
                             fuseRadius: conf.fuseRadius, blastRadius: conf.blastRadius
                         });
                     }
@@ -337,118 +361,95 @@
 
             takeDamage(maxTntDmg, distFromEpicenter, blastRadius, attacker) {
                 let conf = DATA_CONFIG[this.type];
-                
-                // 衝擊波實時距離衰減公式：零距離 100% 威力，邊緣逼近 0%
                 let damageFactor = Math.max(0, 1 - (distFromEpicenter / blastRadius));
-                let actualTntDmg = maxTntDmg * damageFactor;
+                let actualTntDmg = maxTntDmg * damageFactor; // 衝擊波實時衰減
 
                 if (actualTntDmg <= 0) return;
 
-                let logMsg = "";
-                
-                // 一、防禦層判定：真元護盾 / 靈氣護體
-                if (this.shieldTnt > 0 && this.shieldHits > 0) {
-                    this.shieldHits--; // 扣除一次承受次數
+                // 一、精確符合數據：真元護盾完全承受層
+                if (this.shieldHits > 0 && conf.maxShieldTnt > 0) {
+                    this.shieldHits--; // 扣除一次承受數
                     
-                    if (actualTntDmg <= this.shieldTnt) {
-                        // 護盾成功抗下
-                        this.shieldTnt -= actualTntDmg;
-                        let remPercent = ((this.shieldTnt / conf.maxShieldTnt)*100).toFixed(0);
-                        floatingTexts.push({ x: this.x, y: this.y - 15, text: `🛡️護盾吸收(${remPercent}%)`, color: '#00ffff', life: 25 });
+                    if (actualTntDmg <= conf.maxShieldTnt) {
+                        // 衝擊波小於護盾單次抵禦極限 (經身法閃避衰減後)，護盾完美無傷化解！
+                        floatingTexts.push({ x: this.x, y: this.y - 15, text: `🛡️ 護盾無傷抵消 (剩 ${this.shieldHits} 次)`, color: '#00ffff', life: 30 });
                         return;
                     } else {
-                        // 護盾被當場轟穿！剩餘當量破防穿透進入肉身
-                        actualTntDmg -= this.shieldTnt;
-                        this.shieldTnt = 0;
+                        // 威力超過護盾防禦極限 (例如直接貼臉吃5噸核爆)，護盾當場被貫穿
+                        actualTntDmg -= conf.maxShieldTnt;
                         this.shieldHits = 0;
-                        logMsg += `💥 護盾被暴力破防！ `;
+                        floatingTexts.push({ x: this.x, y: this.y - 15, text: `💥 護盾爆裂！`, color: '#ff00ff', life: 30 });
                     }
                 }
 
-                // 二、肉身承受層判定
+                // 二、精確肉身承受判定
                 if (actualTntDmg <= conf.bodyArmor) {
-                    // 肉身抗下，但造成震盪受損
                     let ratio = actualTntDmg / conf.bodyArmor;
-                    this.hpPercent -= ratio * 0.15; // 肉身輕微震裂
-                    floatingTexts.push({ x: this.x, y: this.y - 15, text: `🦴 肉身硬抗(-${(ratio*15).toFixed(1)}%)`, color: '#ffcc00', life: 25 });
+                    this.hpPercent -= ratio * 0.1; // 肉身輕微受損
+                    floatingTexts.push({ x: this.x, y: this.y - 15, text: `🦴 肉身硬抗(-${(ratio * 10).toFixed(1)}%)`, color: '#ffcc00', life: 30 });
                 } else {
-                    // 超過肉身防禦極限！
                     let overDmg = actualTntDmg - conf.bodyArmor;
-                    this.hpPercent -= (overDmg / conf.bodyArmor); // 按超額比例扣除完好度
-                    floatingTexts.push({ x: this.x, y: this.y - 15, text: `🩸 重創! 碎裂`, color: '#ff3333', life: 30 });
+                    this.hpPercent -= (overDmg / conf.bodyArmor); 
+                    floatingTexts.push({ x: this.x, y: this.y - 15, text: `🩸 肉身崩碎！`, color: '#ff3333', life: 35 });
                 }
 
-                // 三、死亡與滴血重生判定
+                // 三、死亡與滴血重生
                 if (this.hpPercent <= 0) {
                     if (this.type === 'zhuji' && !this.hasReborn) {
-                        // 觸發滴血重生數據：消耗 5% 壽命上限，實力下降 50%
                         this.hasReborn = true;
-                        this.hpPercent = 0.5; // 復活後肉身實力降50%
-                        this.speed = conf.speed * 0.5; 
-                        this.shieldTnt = 0; // 護盾不再重置
-                        addLog(totalSimulatedTime, `🩸 【滴血重生】 築基大修肉身破碎，瞬間消耗 5% 壽命凝聚一滴真血逆天復活！此時實力永久跌落 50%！`);
-                        for (let i = 0; i < 25; i++) {
+                        this.hpPercent = 0.5; // 實力降 50%
+                        this.speed = conf.speed * 0.5;
+                        this.shieldHits = 0; // 護盾耗盡
+                        addLog(totalSimulatedTime, `🩸 【滴血重生】 築基大修(ID:${this.id}) 燃燒 5% 壽命逆天重塑肉身！實力永跌 50%！`);
+                        for (let i = 0; i < 20; i++) {
                             particles.push({
-                                x: this.x, y: this.y, vx: (Math.random() - 0.5) * 600, vy: (Math.random() - 0.5) * 600,
-                                radius: Math.random() * 3 + 2, color: 'rgba(255, 0, 50, 0.9)', life: 20
+                                x: this.x, y: this.y, vx: (Math.random() - 0.5) * 500, vy: (Math.random() - 0.5) * 500,
+                                radius: Math.random() * 3 + 2, color: '#ff0033', life: 15
                             });
                         }
                     } else {
-                        // 煉氣期直接被打爆，坐實“玻璃大砲，吃個大倒欠99條命”的評價
-                        let deathReason = (this.type === 'lianqi' && maxTntDmg > 1) ? "正面遭降維爆轟，吃個大倒欠99條命" : "化為劫灰";
-                        addLog(totalSimulatedTime, `💀 【殞落】 ${conf.name} 承受了 ${(actualTntDmg).toFixed(3)}kg TNT 衝擊波，[${deathReason}]！`);
+                        let reason = (this.type === 'lianqi' && maxTntDmg > 1) ? "正面挨大，直接倒欠99條命灰飛煙滅" : "道消身殞";
+                        addLog(totalSimulatedTime, `💀 【殞落】 ${conf.name}(ID:${this.id}) 承受 ${(actualTntDmg).toFixed(2)}kg TNT 衝擊波，[${reason}]！`);
                         this.bodyAlive = false;
                     }
                 }
             }
 
             draw() {
-                // 1. 繪製殘影或避彈動作
-                if (this.isDodging) {
-                    ctx.beginPath(); ctx.arc(this.x - this.dodgeX * 1.5, this.y - this.dodgeY * 1.5, this.radius, 0, Math.PI * 2);
-                    ctx.fillStyle = this.type === 'zhuji' ? 'rgba(255, 51, 204, 0.25)' : 'rgba(77, 255, 77, 0.25)';
-                    ctx.fill();
-                }
-
-                // 2. 陣營光圈
+                // 陣營環
                 ctx.beginPath(); ctx.arc(this.x, this.y, this.radius + 5, 0, Math.PI * 2);
-                ctx.strokeStyle = this.type === 'zhuji' ? '#ff33cc' : '#4dff4d';
-                ctx.lineWidth = 1.5; ctx.stroke();
+                ctx.strokeStyle = TEAM_COLORS[this.team] || '#ffffff';
+                ctx.lineWidth = 2; ctx.stroke();
 
-                // 3. 本體
+                // 本體
                 ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
                 ctx.fillStyle = DATA_CONFIG[this.type].color;
                 ctx.fill();
 
-                // 4. 實體護盾可視化半徑
-                if (this.shieldTnt > 0 && this.shieldHits > 0) {
-                    ctx.beginPath(); ctx.arc(this.x, this.y, this.radius + 8, 0, Math.PI * 2);
-                    ctx.strokeStyle = this.type === 'zhuji' ? 'rgba(230, 0, 255, 0.5)' : 'rgba(0, 255, 200, 0.5)';
-                    ctx.lineWidth = 2; ctx.stroke();
+                // 護盾圈
+                if (this.shieldHits > 0 && DATA_CONFIG[this.type].maxShieldTnt > 0) {
+                    ctx.beginPath(); ctx.arc(this.x, this.y, this.radius + 9, 0, Math.PI * 2);
+                    ctx.strokeStyle = this.type === 'zhuji' ? 'rgba(255, 0, 255, 0.6)' : 'rgba(0, 255, 200, 0.6)';
+                    ctx.lineWidth = 1.5; ctx.stroke();
                 }
 
-                // 5. 精確數據血條與盾量條
+                // 數據血條與次數條
                 let barW = this.radius * 2.8;
                 let startY = this.y - this.radius - 12;
-                
-                // 底色
                 ctx.fillStyle = '#222'; ctx.fillRect(this.x - barW/2, startY, barW, 4);
-                // 肉身健康度條（綠色）
+                // 綠色完好度條
                 ctx.fillStyle = '#00ff00'; ctx.fillRect(this.x - barW/2, startY, barW * Math.max(0, this.hpPercent), 2);
-                
-                // 護盾賸餘當量條（天藍色）
+                // 天藍色護盾剩餘次數條
                 let conf = DATA_CONFIG[this.type];
-                if (conf.maxShieldTnt > 0) {
-                    ctx.fillStyle = '#00ffff'; ctx.fillRect(this.x - barW/2, startY + 2, barW * (this.shieldTnt / conf.maxShieldTnt), 2);
+                if (conf.maxShieldHits > 0 && this.shieldHits > 0) {
+                    ctx.fillStyle = '#00ffff'; ctx.fillRect(this.x - barW/2, startY + 2, barW * (this.shieldHits / conf.maxShieldHits), 2);
                 }
             }
         }
 
         function triggerExplosion(x, y, blastRadius, maxDamage, attacker) {
-            // 生成物理波紋特效
             particles.push({ x: x, y: y, r: 2, maxR: blastRadius, type: attacker.attackerType, isWave: true });
 
-            // 遍歷所有修士，執行實時距離衰減傷害計算
             for (let ent of entities) {
                 let dist = Math.hypot(ent.x - x, ent.y - y);
                 if (dist <= blastRadius + ent.radius) {
@@ -465,36 +466,37 @@
             canvas.height = parseInt(document.getElementById('mapHeight').value) || 500;
 
             let mCount = parseInt(document.getElementById('mortalCount').value) || 0;
+            let mTeam = document.getElementById('mortalTeam').value;
             let lCount = parseInt(document.getElementById('lianqiCount').value) || 0;
+            let lTeam = document.getElementById('lianqiTeam').value;
             let zCount = parseInt(document.getElementById('zhujiCount').value) || 0;
+            let zTeam = document.getElementById('zhujiTeam').value;
 
             let globalId = 0;
 
             for (let i = 0; i < mCount; i++) {
-                entities.push(new Entity(globalId++, Math.random() * 200 + 50, Math.random() * (canvas.height - 100) + 50, 'mortal', 'A'));
+                entities.push(new Entity(globalId++, Math.random() * 200 + 50, Math.random() * (canvas.height - 100) + 50, 'mortal', mTeam));
             }
-            // 煉氣隨機分散
             for (let i = 0; i < lCount; i++) {
-                entities.push(new Entity(globalId++, Math.random() * (canvas.width - 300) + 150, Math.random() * (canvas.height - 100) + 50, 'lianqi', 'B'));
+                entities.push(new Entity(globalId++, Math.random() * (canvas.width - 300) + 150, Math.random() * (canvas.height - 100) + 50, 'lianqi', lTeam));
             }
-            // 築基相對而立，開局展開超高速博弈
             for (let i = 0; i < zCount; i++) {
-                let startX = i % 2 === 0 ? 200 + Math.random()*50 : canvas.width - 250 - Math.random()*50;
-                entities.push(new Entity(globalId++, startX, canvas.height/2 + (Math.random()-0.5)*120, 'zhuji', 'C'));
+                let startX = i % 2 === 0 ? 250 + Math.random()*50 : canvas.width - 300 - Math.random()*50;
+                entities.push(new Entity(globalId++, startX, canvas.height/2 + (Math.random()-0.5)*150, 'zhuji', zTeam));
             }
 
             gameActive = true;
-            logPanel.innerHTML = "=== 天道演武開鏡：大修 42馬赫神速拉扯中 ===";
+            logPanel.innerHTML = "=== 演武大陣已開：高溫、毒素抗性數據全加載，身法慢放觀察已就緒 ===";
         }
 
-        // 高精度物理微步迭代器 (SIM_DT = 0.0001s)
+        // 高精度物理步進 (子步迭代)
         function advancePhysicsStep() {
             totalSimulatedTime += SIM_DT;
 
-            // 1. 更新實體狀態
             for (let ent of entities) ent.update(SIM_DT);
 
-            // 2. 更新飛彈航向與近接引信
+            let intraRank = document.getElementById('intraRankCombat').checked;
+
             for (let i = projectiles.length - 1; i >= 0; i--) {
                 let p = projectiles[i];
                 p.x += p.vx * SIM_DT;
@@ -502,99 +504,98 @@
 
                 let explodeTriggered = false;
 
-                // 空氣感應引信判定：只要進入敵人的感應範圍內，法術當場凌空引爆
                 for (let ent of entities) {
                     if (ent.id === p.attackerId) continue;
-                    let d = Math.hypot(ent.x - p.x, ent.y - p.y);
-                    if (d <= p.fuseRadius + ent.radius) {
-                        explodeTriggered = true; break;
+                    let isEnemy = (ent.team !== p.attackerTeam) || (intraRank && ent.type === p.attackerType);
+                    if (isEnemy) {
+                        let d = Math.hypot(ent.x - p.x, ent.y - p.y);
+                        if (d <= p.fuseRadius + ent.radius) { explodeTriggered = true; break; }
                     }
                 }
 
-                // 觸碰演武場陣法壁壘
                 if (p.x < 0 || p.x > canvas.width || p.y < 0 || p.y > canvas.height) {
                     explodeTriggered = true;
                 }
 
                 if (explodeTriggered) {
-                    let attackerInfo = { attackerId: p.attackerId, attackerType: p.attackerType };
+                    let attackerInfo = { attackerId: p.attackerId, attackerType: p.attackerType, attackerTeam: p.attackerTeam };
                     triggerExplosion(p.x, p.y, p.blastRadius, p.damage, attackerInfo);
                     projectiles.splice(i, 1);
                 }
             }
 
-            // 3. 過濾殞落的實體
             entities = entities.filter(e => e.bodyAlive);
 
-            // 4. 特效與飄字步進
+            // 衝擊波光圈擴散保留在物理層計算，確保半徑精確
             for (let i = particles.length - 1; i >= 0; i--) {
                 let pt = particles[i];
                 if (pt.isWave) {
-                    // 衝擊波實時向外擴散
-                    pt.r += pt.type === 'zhuji' ? 2200 * SIM_DT : 900 * SIM_DT;
+                    pt.r += pt.type === 'zhuji' ? 2400 * SIM_DT : 900 * SIM_DT;
                     if (pt.r >= pt.maxR) particles.splice(i, 1);
-                } else {
-                    pt.life--; if (pt.life <= 0) particles.splice(i, 1);
                 }
-            }
-
-            for (let i = floatingTexts.length - 1; i >= 0; i--) {
-                floatingTexts[i].life--;
-                if (floatingTexts[i].life <= 0) floatingTexts.splice(i, 1);
             }
 
             // 檢查勝負終局
             if (entities.length <= 1) {
                 gameActive = false;
                 if (entities.length === 1) {
-                    addLog(totalSimulatedTime, `🏆 【演武勝出】 最終存活者：${DATA_CONFIG[entities[0].type].name}(ID:${entities[0].id})！身法絕倫，成功吃雞！`);
+                    addLog(totalSimulatedTime, `🏆 【大陣終局】 最終勝出者為：${DATA_CONFIG[entities[0].type].name}(ID:${entities[0].id} / 陣營:${entities[0].team})！`);
                 } else {
-                    addLog(totalSimulatedTime, `💀 【天道同殤】 連環爆轟引發對流，全場盡數同歸於盡！`);
+                    addLog(totalSimulatedTime, `💀 【天道同消】 終極對流爆轟，場內無人生還！`);
                 }
             }
         }
 
+        // 60FPS 渲染與視覺控制層 (飄字和殘影在這裡正常扣除壽命，絕不丟失)
         function gameLoop() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // 依據用戶選擇的「神識觀測速度」累積物理步長
             if (gameActive) {
                 let timeScale = parseFloat(document.getElementById('timeScale').value) || 1.0;
-                // 瀏覽器 1 幀（約 0.0166s），若 scale=1，則需要跑 166 步微步
                 speedAccumulator += (1 / 60) * timeScale;
                 
                 while (speedAccumulator >= SIM_DT) {
                     advancePhysicsStep();
                     speedAccumulator -= SIM_DT;
                 }
-                // 更新上方的真實逝去時間
                 simTimeDisplay.innerText = totalSimulatedTime.toFixed(6);
             }
 
-            // 【渲染展示層】
+            // 【渲染層】
             for (let ent of entities) ent.draw();
 
             for (let p of projectiles) {
                 ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                ctx.fillStyle = p.color; ctx.shadowBlur = 8; ctx.shadowColor = p.color; ctx.fill(); ctx.shadowBlur = 0;
+                ctx.fillStyle = p.color; ctx.shadowBlur = 6; ctx.shadowColor = p.color; ctx.fill(); ctx.shadowBlur = 0;
             }
 
-            for (let pt of particles) {
+            // 渲染殘影與爆轟光圈
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let pt = particles[i];
                 if (pt.isWave) {
                     let alpha = Math.max(0, 1 - (pt.r / pt.maxR));
                     ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.r, 0, Math.PI * 2);
                     ctx.strokeStyle = pt.type === 'zhuji' ? `rgba(255, 51, 204, ${alpha * 0.5})` : `rgba(77, 255, 77, ${alpha * 0.6})`;
                     ctx.lineWidth = pt.type === 'zhuji' ? 3 : 1.5; ctx.stroke();
                 } else if (pt.isAfterImage) {
-                    // 繪製遁術殘影
+                    // 殘影壽命每幀衰減
+                    pt.life--;
+                    if (pt.life <= 0) { particles.splice(i, 1); continue; }
                     ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.radius, 0, Math.PI * 2);
                     ctx.fillStyle = pt.color; ctx.fill();
                 }
             }
 
-            for (let ft of floatingTexts) {
-                ctx.fillStyle = ft.color; ctx.font = 'bold 11px monospace'; ctx.textAlign = 'center';
-                ctx.fillText(ft.text, ft.x, ft.y);
+            // 飄字壽命每幀衰減 (完美解決看不見的問題)
+            for (let i = floatingTexts.length - 1; i >= 0; i--) {
+                let ft = floatingTexts[i];
+                ft.y -= 0.4; ft.life--;
+                if (ft.life <= 0) {
+                    floatingTexts.splice(i, 1);
+                } else {
+                    ctx.fillStyle = ft.color; ctx.font = 'bold 11px monospace'; ctx.textAlign = 'center';
+                    ctx.fillText(ft.text, ft.x, ft.y);
+                }
             }
 
             requestAnimationFrame(gameLoop);
