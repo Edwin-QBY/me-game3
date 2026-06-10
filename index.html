@@ -3,86 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>高維修仙戰鬥模擬器 - 同階終極內戰版</title>
+    <title>高維修仙戰鬥模擬器 - 戰術閃避與戰場自定義版</title>
     <style>
         body {
-            margin: 0; padding: 20px;
+            margin: 0; padding: 15px;
             background-color: #0d0d11; color: #fff;
             font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
             display: flex; flex-direction: column; align-items: center;
         }
-        h1 { margin: 0 0 5px 0; color: #00ffcc; text-shadow: 0 0 10px rgba(0,255,204,0.4); font-size: 24px; }
-        .time-info { color: #ffad33; font-size: 13px; margin-bottom: 15px; background: #1a1a26; padding: 6px 12px; border-radius: 4px; border: 1px solid #333; }
+        h1 { margin: 0 0 5px 0; color: #00ffcc; text-shadow: 0 0 10px rgba(0,255,204,0.4); font-size: 22px; }
+        .time-info { color: #ffad33; font-size: 12px; margin-bottom: 10px; background: #1a1a26; padding: 4px 12px; border-radius: 4px; border: 1px solid #333; }
         
         #control-panel {
-            background-color: #161622; padding: 15px; border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 12px;
-            width: 100%; max-width: 950px; margin-bottom: 15px; border: 1px solid #2a2a3a;
+            background-color: #161622; padding: 12px; border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 10px;
+            width: 100%; max-width: 1000px; margin-bottom: 10px; border: 1px solid #2a2a3a;
         }
-        .faction-container { display: flex; gap: 15px; }
+        .faction-container { display: flex; gap: 12px; }
         .faction-box {
-            flex: 1; padding: 10px; border-radius: 6px; background: #1f1f2e;
-            display: flex; flex-direction: column; gap: 8px; border-top: 4px solid #fff;
+            flex: 1; padding: 8px; border-radius: 6px; background: #1f1f2e;
+            display: flex; flex-direction: column; gap: 6px; border-top: 4px solid #fff;
         }
         .f-mortal { border-top-color: #aaaaaa; }
         .f-lianqi { border-top-color: #4dff4d; }
         .f-zhuji { border-top-color: #ff33cc; }
         
-        .faction-box h3 { margin: 0; font-size: 15px; color: #fff; display: flex; justify-content: space-between; }
+        .faction-box h3 { margin: 0; font-size: 14px; color: #fff; display: flex; justify-content: space-between; }
         .faction-box .eval { font-size: 11px; color: #ffad33; }
         
         .row { display: flex; align-items: center; justify-content: space-between; font-size: 12px; }
-        input[type="number"] { width: 50px; padding: 4px; border-radius: 4px; border: none; background: #0d0d11; color: #fff; text-align: center; }
-        select { padding: 4px; border-radius: 4px; background: #0d0d11; color: #00ffcc; border: none; font-size: 12px; }
+        input[type="number"] { width: 55px; padding: 3px; border-radius: 4px; border: none; background: #0d0d11; color: #fff; text-align: center; }
+        select { padding: 3px; border-radius: 4px; background: #0d0d11; color: #00ffcc; border: none; font-size: 12px; }
         
         .global-settings {
-            display: flex; justify-content: space-between; align-items: center;
-            background: #11111a; padding: 10px; border-radius: 6px; border: 1px dashed #444;
+            display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+            background: #11111a; padding: 8px; border-radius: 6px; border: 1px dashed #444; gap: 10px;
         }
-        .cw-label { color: #ff3366; font-weight: bold; font-size: 14px; display: flex; align-items: center; gap: 5px; cursor: pointer; }
-        .cw-label input { width: 16px; height: 16px; cursor: pointer; }
-
+        .setting-group { display: flex; align-items: center; gap: 15px; font-size: 12px; }
+        .cw-label { color: #ff3366; font-weight: bold; display: flex; align-items: center; gap: 5px; cursor: pointer; }
+        
         #startBtn {
             background: linear-gradient(135deg, #00ffcc, #0099ff); color: #000;
-            font-weight: bold; border: none; padding: 10px 25px; border-radius: 6px;
-            cursor: pointer; font-size: 16px; transition: all 0.2s; box-shadow: 0 0 15px rgba(0,255,204,0.4);
+            font-weight: bold; border: none; padding: 8px 20px; border-radius: 6px;
+            cursor: pointer; font-size: 14px; transition: all 0.2s; box-shadow: 0 0 12px rgba(0,255,204,0.3);
         }
-        #startBtn:hover { transform: scale(1.03); box-shadow: 0 0 25px rgba(0,255,204,0.7); }
+        #startBtn:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(0,255,204,0.6); }
         
         canvas { background-color: #050508; border: 2px solid #222233; border-radius: 6px; box-shadow: 0 10px 40px rgba(0,0,0,0.9); }
         #log-panel {
-            margin-top: 10px; background: #11111a; padding: 10px; border-radius: 6px;
-            width: 100%; max-width: 930px; height: 100px; overflow-y: auto;
-            font-family: monospace; font-size: 12px; color: #99eaec; border: 1px solid #222;
+            margin-top: 8px; background: #11111a; padding: 8px; border-radius: 6px;
+            width: 100%; max-width: 980px; height: 90px; overflow-y: auto;
+            font-family: monospace; font-size: 11px; color: #99eaec; border: 1px solid #222;
         }
     </style>
 </head>
 <body>
 
     <h1>高維修仙戰鬥模擬器</h1>
-    <div class="time-info">⏳ 物理引擎：智能空氣引信 + 衝擊波實時距離衰減 | 觀戰重力延時：300倍慢速</div>
+    <div class="time-info">⚡ 核心升級：動態身法閃避（正面避彈） | 引信與衝擊波物理衰減 | 戰場多維調整已解鎖</div>
 
     <div id="control-panel">
         <div class="faction-container">
-            <!-- 凡人 -->
             <div class="faction-box f-mortal">
-                <h3>凡人 <span class="eval">評價：肉體凡胎</span></h3>
+                <h3>凡人 <span class="eval">肉體凡胎</span></h3>
                 <div class="row"><label>數量：</label><input type="number" id="mortalCount" value="2"></div>
                 <div class="row"><label>陣營：</label>
-                    <select id="mortalTeam"><option value="A">天道盟 (A)</option><option value="B">魔道宗 (B)</option><option value="C" selected>散修/凡人 (C)</option></select>
+                    <select id="mortalTeam"><option value="A">天道盟 (A)</option><option value="B">魔道宗 (B)</option><option value="C" selected>散修 (C)</option></select>
                 </div>
             </div>
-            <!-- 煉氣期 -->
             <div class="faction-box f-lianqi">
-                <h3>煉氣期1-10層 <span class="eval">評價：玻璃大砲對轟</span></h3>
+                <h3>煉氣期 <span class="eval">法術速射</span></h3>
                 <div class="row"><label>數量：</label><input type="number" id="lianqiCount" value="3"></div>
                 <div class="row"><label>陣營：</label>
                     <select id="lianqiTeam"><option value="A" selected>天道盟 (A)</option><option value="B">魔道宗 (B)</option><option value="C">獨立 (C)</option></select>
                 </div>
             </div>
-            <!-- 築基期 -->
             <div class="faction-box f-zhuji">
-                <h3>築基初-後期 <span class="eval">評價：同階移動核彈</span></h3>
+                <h3>築基期 <span class="eval">大修對流</span></h3>
                 <div class="row"><label>數量：</label><input type="number" id="zhujiCount" value="2"></div>
                 <div class="row"><label>陣營：</label>
                     <select id="zhujiTeam"><option value="A">天道盟 (A)</option><option value="B" selected>魔道宗 (B)</option><option value="C">獨立 (C)</option></select>
@@ -90,17 +87,27 @@
             </div>
         </div>
 
-        <!-- 核心機制補完：允許同階級互相殘殺 -->
         <div class="global-settings">
-            <label class="cw-label">
-                <input type="checkbox" id="intraRankCombat" checked> ⚔️ 開啟同境界生死內戰（築基對轟、煉氣互炸）
-            </label>
-            <button id="startBtn">神識凝聚·開戰！</button>
+            <div class="setting-group">
+                <label>戰場寬：</label><input type="number" id="mapWidth" value="1000" min="600" max="1600">
+                <label>高：</label><input type="number" id="mapHeight" value="500" min="400" max="900">
+                <label>戰鬥速度：</label>
+                <select id="timeScale">
+                    <option value="0.5">0.5x 慢速解析</option>
+                    <option value="1.0" selected>1.0x 正常演武</option>
+                    <option value="2.0">2.0x 加速博弈</option>
+                    <option value="4.0">4.0x 瞬息萬變</option>
+                </select>
+            </div>
+            <div class="setting-group">
+                <label class="cw-label"><input type="checkbox" id="intraRankCombat" checked> 開啟同境界生死內戰</label>
+                <button id="startBtn">凝聚神識·開戰！</button>
+            </div>
         </div>
     </div>
 
-    <canvas id="arena" width="950" height="500"></canvas>
-    <div id="log-panel">=== 天道演武場已就緒：同境界互毆與空氣引爆機制已完全解鎖 ===</div>
+    <canvas id="arena" width="1000" height="500"></canvas>
+    <div id="log-panel">=== 天道演武場：調整戰場維度與速度後，點擊上方按鈕即可啟動 ===</div>
 
     <script>
         const canvas = document.getElementById('arena');
@@ -110,26 +117,30 @@
 
         let entities = []; let projectiles = []; let particles = []; let floatingTexts = [];
         let gameActive = false;
+        let speedAccumulator = 0;
 
+        // 【數值全面天平化重構】：大幅提升護盾與血量，防止直擊秒殺，拉長博弈時間
         const CONFIG = {
             mortal: {
                 name: '凡人', color: '#aaaaaa', radius: 6,
-                hp: 2, shield: 0, speed: 0.1,
-                attackCd: 60, range: 15, dmg: 0.001
+                hp: 5, shield: 0, speed: 0.2,
+                attackCd: 60, range: 15, dmg: 0.1
             },
             lianqi: {
                 name: '煉氣修士', color: '#4dff4d', radius: 9,
-                hp: 120, shield: 280, speed: 2.2,
-                attackCd: 80, range: 260, dmg: 5,         // 5kg TNT 
-                blastRadius: 55,                           
-                fuseRadius: 15                             
+                hp: 450, shield: 1500, speed: 3.2,       // 提升生存
+                attackCd: 75, range: 280, dmg: 260,       // 彈頭基礎威力
+                blastRadius: 60,                           
+                fuseRadius: 15,
+                dodgeDist: 80                             // 避彈感知距離
             },
             zhuji: {
                 name: '築基大修', color: '#ff33cc', radius: 13,
-                hp: 200, shield: 3650, speed: 14.0,
-                attackCd: 110, range: 500, dmg: 5000,      // 5噸 TNT 
+                hp: 4500, shield: 24000, speed: 15.0,     // 巨幅強化護盾，可抗多次正面核爆
+                attackCd: 100, range: 520, dmg: 4800,     // 單發高當量，但無法一擊秒殺同階
                 blastRadius: 160,                          
-                fuseRadius: 45                             
+                fuseRadius: 42,
+                dodgeDist: 220                            // 遠程神識預警，提早做出正面閃避
             }
         };
 
@@ -146,27 +157,68 @@
                 this.hp = CONFIG[type].hp; this.maxHp = CONFIG[type].hp;
                 this.shield = CONFIG[type].shield; this.maxShield = CONFIG[type].shield;
                 this.speed = CONFIG[type].speed; this.radius = CONFIG[type].radius;
-                this.attackCd = Math.floor(Math.random() * 30);
+                this.attackCd = Math.floor(Math.random() * 40);
                 this.hasReborn = false;
                 this.isSuppressed = false;
+                this.lastDodgeTime = 0;
             }
 
             update() {
                 this.isSuppressed = false;
                 if (this.attackCd > 0) this.attackCd--;
 
-                // 靈壓壓制 (高境界壓制低境界，若開啟內戰，同階不免疫靈壓)
-                let intraRank = document.getElementById('intraRankCombat').checked;
+                // 1. 靈壓壓制檢測
                 for (let ent of entities) {
                     if (ent.id === this.id) continue;
-                    let isTarget = false;
-                    if (intraRank && ent.type === this.type) {
-                        // 同境界內戰時，若自身狀態好，也有微弱氣勢干擾，但主要還是高階壓低階
+                    if (CONFIG[ent.type].hp > CONFIG[this.type].hp) {
+                        let pressureRange = ent.type === 'zhuji' ? 240 : 60;
+                        if (Math.hypot(ent.x - this.x, ent.y - this.y) <= pressureRange) {
+                            this.isSuppressed = true;
+                        }
                     }
-                    if (CONFIG[ent.type].hp < CONFIG[this.type].hp) {
-                        let pressureRange = this.type === 'zhuji' ? 250 : 60;
-                        let d = Math.hypot(ent.x - this.x, ent.y - this.y);
-                        if (d <= pressureRange) ent.isSuppressed = true; 
+                }
+
+                // 2. 【核心機制：正面防禦身法閃避】
+                let intraRank = document.getElementById('intraRankCombat').checked;
+                let conf = CONFIG[this.type];
+                
+                if (this.type === 'zhuji' || this.type === 'lianqi') {
+                    for (let p of projectiles) {
+                        // 判斷是否為敵方彈頭
+                        let isEnemyProj = (p.attackerTeam !== this.team) || (intraRank && p.attackerType === this.type && p.attackerId !== this.id);
+                        if (!isEnemyProj) continue;
+
+                        let dx = this.x - p.x; let dy = this.y - p.y;
+                        let dist = Math.hypot(dx, dy);
+
+                        // 進入避彈神識感知圈
+                        if (dist < conf.dodgeDist) {
+                            // 向量點積：判斷飛彈是否正朝向自己飛來（正面襲擊）
+                            let projVelLength = Math.hypot(p.vx, p.vy);
+                            if (projVelLength > 0) {
+                                let dot = (dx * p.vx + dy * p.vy) / (dist * projVelLength);
+                                if (dot > 0.6) { // dot > 0 代表相對接近，> 0.6 代表高度朝向正面
+                                    // 計算彈道垂直方向進行側向「橫移閃避」
+                                    let perpX = -p.vy / projVelLength;
+                                    let perpY = p.vx / projVelLength;
+                                    
+                                    // 決定向左還是向右閃（選擇遠離飛彈或者隨機）
+                                    let side = (dx * perpX + dy * perpY > 0) ? 1 : -1;
+                                    
+                                    // 依據自身速度爆發身法位移 (築基大修速度快，閃避位移極大)
+                                    this.x += perpX * side * this.speed * 0.75;
+                                    this.y += perpY * side * this.speed * 0.75;
+
+                                    if (Math.random() < 0.08) {
+                                        floatingTexts.push({
+                                            x: this.x, y: this.y - 22,
+                                            text: this.type === 'zhuji' ? "⚡ 殘影挪移" : "💨 變向閃避",
+                                            life: 22, color: this.type === 'zhuji' ? '#ff00ff' : '#00ffaa'
+                                        });
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -176,33 +228,34 @@
                 let dist = Math.hypot(target.x - this.x, target.y - this.y);
                 let angle = Math.atan2(target.y - this.y, target.x - this.x);
 
-                // 移動與同境界閃避走位
+                // 3. 基礎戰術走位與拉扯
                 if (!this.isSuppressed) {
                     if (this.type === 'zhuji') {
-                        // 築基同階戰鬥：保持距離，高頻不規則瞬移閃避
-                        if (dist > CONFIG.zhuji.range - 120) {
-                            this.x += Math.cos(angle) * this.speed;
-                            this.y += Math.sin(angle) * this.speed;
-                        } else if (dist < 150) {
-                            this.x -= Math.cos(angle) * this.speed;
-                            this.y -= Math.sin(angle) * this.speed;
+                        // 築基拉鋸：保持法術極限距離進行轟炸，拒絕肉搏
+                        if (dist > conf.range - 100) {
+                            this.x += Math.cos(angle) * this.speed * 0.5;
+                            this.y += Math.sin(angle) * this.speed * 0.5;
+                        } else if (dist < 200) {
+                            this.x -= Math.cos(angle) * this.speed * 0.6;
+                            this.y -= Math.sin(angle) * this.speed * 0.6;
                         }
-                        if (Math.random() < 0.25) { // 模擬42馬赫高頻遁術挪移
-                            this.x += (Math.random() - 0.5) * 60;
-                            this.y += (Math.random() - 0.5) * 60;
+                        // 戰術隨機無規則晃動，干擾敵方彈道預判
+                        if (Math.random() < 0.2) {
+                            this.x += (Math.random() - 0.5) * 25;
+                            this.y += (Math.random() - 0.5) * 25;
                         }
                     } else {
-                        // 正常推進
-                        this.x += Math.cos(angle) * this.speed;
-                        this.y += Math.sin(angle) * this.speed;
+                        this.x += Math.cos(angle) * this.speed * 0.6;
+                        this.y += Math.sin(angle) * this.speed * 0.6;
                     }
                 }
 
+                // 邊界限制
                 this.x = Math.max(this.radius, Math.min(canvas.width - this.radius, this.x));
                 this.y = Math.max(this.radius, Math.min(canvas.height - this.radius, this.y));
 
-                // 觸發進攻
-                if (dist <= CONFIG[this.type].range && this.attackCd === 0) {
+                // 4. 發射冷卻完畢則進攻
+                if (dist <= conf.range && this.attackCd === 0) {
                     this.fireAttack(target, angle);
                 }
             }
@@ -213,18 +266,13 @@
 
                 for (let ent of entities) {
                     if (ent.id === this.id) continue;
-
-                    // 核心敵友判定的改進：
-                    // 如果開啟了同階內戰，並且對方跟我「同境界」，則直接視為生死仇敵！
                     let isEnemy = (ent.team !== this.team);
-                    if (intraRank && ent.type === this.type) {
-                        isEnemy = true; 
+                    if (intraRank && ent.type === this.type) isEnemy = true; 
+
+                    if (isEnemy) {
+                        let d = Math.hypot(ent.x - this.x, ent.y - this.y);
+                        if (d < minDist) { minDist = d; nearest = ent; }
                     }
-
-                    if (!isEnemy) continue;
-
-                    let d = Math.hypot(ent.x - this.x, ent.y - this.y);
-                    if (d < minDist) { minDist = d; nearest = ent; }
                 }
                 return nearest;
             }
@@ -237,29 +285,26 @@
                     target.takeDamage(conf.dmg, 0, 1, this); 
                 } else if (this.type === 'lianqi') {
                     let count = Math.floor(Math.random() * 2) + 1;
-                    let targetStr = target.type === this.type ? "同階切磋" : "降維打擊";
-                    addLog(`🔥 [煉氣交火-${targetStr}] 祭出五行法術，連發 ${count} 彈！`);
                     for (let i = 0; i < count; i++) {
-                        let dev = (Math.random() - 0.5) * 0.2;
+                        let dev = (Math.random() - 0.5) * 0.18;
                         projectiles.push({
                             x: this.x, y: this.y,
-                            vx: Math.cos(angle + dev) * 8, vy: Math.sin(angle + dev) * 8,
-                            damage: conf.dmg, type: 'lianqi_ball', color: '#4dff4d', 
-                            radius: 4, attackerId: this.id, attackerType: this.type, attackerTeam: this.team,
+                            vx: Math.cos(angle + dev) * 7.5, vy: Math.sin(angle + dev) * 7.5,
+                            damage: conf.dmg, type: 'lianqi_ball', color: '#4dff4d', radius: 4,
+                            attackerId: this.id, attackerType: this.type, attackerTeam: this.team,
                             fuseRadius: conf.fuseRadius, blastRadius: conf.blastRadius
                         });
                     }
                 } else if (this.type === 'zhuji') {
-                    let count = Math.floor(Math.random() * 3) + 3; 
-                    let targetStr = target.type === this.type ? "同階廝殺" : "抹殺螻蟻";
-                    addLog(`⚡ [築基交火-${targetStr}] 大修揮手打出 ${count} 股真元弩，凌空引信鎖定！`);
+                    let count = Math.floor(Math.random() * 2) + 3; // 3~4連發重弩
+                    addLog(`⚡ [大修交火] 祭出 ${count} 股真元巨弩，引信鎖定敵身！`);
                     for (let i = 0; i < count; i++) {
-                        let dev = (Math.random() - 0.5) * 0.3;
+                        let dev = (Math.random() - 0.5) * 0.25;
                         projectiles.push({
                             x: this.x, y: this.y,
-                            vx: Math.cos(angle + dev) * 16, vy: Math.sin(angle + dev) * 16,
-                            damage: conf.dmg, type: 'zhuji_laser', color: '#ff33cc', 
-                            radius: 5, attackerId: this.id, attackerType: this.type, attackerTeam: this.team,
+                            vx: Math.cos(angle + dev) * 14.5, vy: Math.sin(angle + dev) * 14.5,
+                            damage: conf.dmg, type: 'zhuji_laser', color: '#ff33cc', radius: 5,
+                            attackerId: this.id, attackerType: this.type, attackerTeam: this.team,
                             fuseRadius: conf.fuseRadius, blastRadius: conf.blastRadius
                         });
                     }
@@ -267,6 +312,7 @@
             }
 
             takeDamage(amount, distFromEpicenter, blastRadius, attackerInfo) {
+                // 衝擊波隨距離線性遞減：邊緣傷害逼近 0，中心 100%
                 let damageFactor = blastRadius ? Math.max(0, 1 - (distFromEpicenter / blastRadius)) : 1;
                 let finalDamage = amount * damageFactor;
 
@@ -282,75 +328,77 @@
 
                 this.hp -= finalDamage;
 
-                let txt = finalDamage > 0 ? `-${Math.ceil(finalDamage)}kg TNT` : `🛡️護盾抵消`;
-                floatingTexts.push({ x: this.x, y: this.y - 15 - (Math.random()*10), text: txt, life: 35, color: finalDamage > 0 ? '#ff4d4d' : '#00ffff' });
+                // 飄字呈現經身法避開後的實時減免傷害
+                let txt = finalDamage > 0 ? `-${Math.ceil(finalDamage)}` : `🛡️ 護盾完全化解`;
+                floatingTexts.push({ x: this.x, y: this.y - 15 - (Math.random()*8), text: txt, life: 30, color: finalDamage > 0 ? '#ff4d4d' : '#00ffff' });
 
                 if (this.hp <= 0) {
                     if (this.type === 'zhuji' && !this.hasReborn) {
-                        this.hasReborn = true; this.hp = this.maxHp * 0.5; this.shield = 0;
-                        addLog(`🩸 【滴血重生】 築基大修被重創，燃燒5%壽命凝聚真血復活，實力下降50%！`);
-                        for (let i = 0; i < 35; i++) {
+                        this.hasReborn = true; this.hp = this.maxHp * 0.4; this.shield = 0;
+                        addLog(`🩸 【滴血重生】 築基大修幾近殞落，強行燃燒真元重塑肉身，再戰！`);
+                        for (let i = 0; i < 30; i++) {
                             particles.push({
-                                x: this.x, y: this.y, vx: (Math.random() - 0.5) * 10, vy: (Math.random() - 0.5) * 10,
-                                radius: Math.random() * 4 + 2, color: 'rgba(255,0,50,0.8)', life: 30
+                                x: this.x, y: this.y, vx: (Math.random() - 0.5) * 8, vy: (Math.random() - 0.5) * 8,
+                                radius: Math.random() * 3 + 2, color: 'rgba(255,0,50,0.8)', life: 25
                             });
                         }
                     } else {
-                        let deathStr = attackerInfo && attackerInfo.type === this.type ? "同階制裁" : "爆轟隕落";
-                        addLog(`💀 [${deathStr}] ${CONFIG[this.type].name} 承受不住核爆衝擊波，灰飛煙滅！`);
+                        addLog(`💀 [劫灰] ${CONFIG[this.type].name} 終究未躲開連環核爆，道消身殞！`);
                         entities = entities.filter(e => e.id !== this.id);
                     }
                 }
             }
 
             draw() {
+                // 陣營環
                 ctx.beginPath(); ctx.arc(this.x, this.y, this.radius + 4, 0, Math.PI * 2);
                 ctx.strokeStyle = TEAM_COLORS[this.team]; ctx.lineWidth = 2; ctx.stroke();
 
+                // 本體
                 ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
                 ctx.fillStyle = this.isSuppressed ? '#555566' : CONFIG[this.type].color;
                 ctx.shadowBlur = this.type === 'zhuji' ? 12 : 4;
                 ctx.shadowColor = CONFIG[this.type].color;
                 ctx.fill(); ctx.shadowBlur = 0;
 
+                // 護盾圈
                 if (this.shield > 0) {
                     ctx.beginPath(); ctx.arc(this.x, this.y, this.radius + 7, 0, Math.PI * 2);
-                    ctx.strokeStyle = this.type === 'zhuji' ? 'rgba(255, 0, 255, 0.6)' : 'rgba(0, 255, 255, 0.5)';
+                    ctx.strokeStyle = this.type === 'zhuji' ? 'rgba(255, 0, 255, 0.5)' : 'rgba(0, 255, 255, 0.4)';
                     ctx.lineWidth = 1.5; ctx.stroke();
                 }
 
-                let barW = this.radius * 2.5;
+                // 血條
+                let barW = this.radius * 2.6;
                 ctx.fillStyle = '#333'; ctx.fillRect(this.x - barW/2, this.y - this.radius - 8, barW, 3);
                 ctx.fillStyle = '#00ff00'; ctx.fillRect(this.x - barW/2, this.y - this.radius - 8, barW * Math.max(0, this.hp / this.maxHp), 3);
             }
         }
 
         function triggerExplosion(x, y, radius, maxDamage, attackerInfo, type) {
-            particles.push({ x: x, y: y, r: 5, maxR: radius, type: type, isWave: true });
+            // 漸變淡出波纹特效
+            particles.push({ x: x, y: y, r: 6, maxR: radius, type: type, isWave: true });
 
-            let pCount = type === 'zhuji' ? 45 : 12;
+            let pCount = type === 'zhuji' ? 35 : 10;
             for (let i = 0; i < pCount; i++) {
                 particles.push({
                     x: x, y: y,
-                    vx: (Math.random() - 0.5) * (type === 'zhuji' ? 14 : 6),
-                    vy: (Math.random() - 0.5) * (type === 'zhuji' ? 14 : 6),
-                    radius: Math.random() * (type === 'zhuji' ? 5 : 3) + 1,
-                    color: type === 'zhuji' ? '#ff33cc' : '#ff9900', life: 20
+                    vx: (Math.random() - 0.5) * (type === 'zhuji' ? 12 : 5),
+                    vy: (Math.random() - 0.5) * (type === 'zhuji' ? 12 : 5),
+                    radius: Math.random() * 3 + 1,
+                    color: type === 'zhuji' ? '#ff33cc' : '#ff9900', life: 18
                 });
             }
 
             let intraRank = document.getElementById('intraRankCombat').checked;
 
             for (let ent of entities) {
-                if (ent.id === attackerInfo.id) continue; // 不炸自己
+                if (ent.id === attackerInfo.id) continue; 
 
-                let isEnemy = (ent.team !== attackerInfo.team);
-                if (intraRank && ent.type === attackerInfo.type) {
-                    isEnemy = true; // 同階即是敵人，衝擊波照樣造成傷害
-                }
-
+                let isEnemy = (ent.team !== attackerInfo.team) || (intraRank && ent.type === attackerInfo.type);
                 if (isEnemy) {
                     let dist = Math.hypot(ent.x - x, ent.y - y);
+                    // 如果在衝擊波擴散半徑內，進行真實距離衰減計算
                     if (dist <= radius + ent.radius) {
                         ent.takeDamage(maxDamage, dist, radius, attackerInfo);
                     }
@@ -360,6 +408,10 @@
 
         function setupGame() {
             entities = []; projectiles = []; particles = []; floatingTexts = [];
+
+            // 實時讀取並調整戰場畫布尺寸
+            canvas.width = parseInt(document.getElementById('mapWidth').value) || 1000;
+            canvas.height = parseInt(document.getElementById('mapHeight').value) || 500;
 
             let mCount = parseInt(document.getElementById('mortalCount').value) || 0;
             let mTeam = document.getElementById('mortalTeam').value;
@@ -371,127 +423,138 @@
             let globalId = 0;
 
             for (let i = 0; i < mCount; i++) {
-                entities.push(new Entity(globalId++, Math.random() * 200 + 50, Math.random() * 400 + 50, 'mortal', mTeam));
+                entities.push(new Entity(globalId++, Math.random() * 150 + 50, Math.random() * (canvas.height - 100) + 50, 'mortal', mTeam));
             }
-            // 讓同階煉氣分散在戰場，利於互相對轟
             for (let i = 0; i < lCount; i++) {
-                entities.push(new Entity(globalId++, Math.random() * 700 + 100, Math.random() * 350 + 70, 'lianqi', lTeam));
+                entities.push(new Entity(globalId++, Math.random() * (canvas.width - 200) + 100, Math.random() * (canvas.height - 100) + 50, 'lianqi', lTeam));
             }
-            // 讓同階築基出生在兩端，開局直接觸發42馬赫相對拉扯核爆
+            // 築基修士對立生成，方便觀察對轟和閃避殘影
             for (let i = 0; i < zCount; i++) {
-                let startX = i % 2 === 0 ? 150 + Math.random()*50 : 750 + Math.random()*50;
-                entities.push(new Entity(globalId++, startX, 250 + (Math.random()-0.5)*150, 'zhuji', zTeam));
+                let startX = i % 2 === 0 ? 120 + Math.random()*60 : canvas.width - 180 - Math.random()*60;
+                entities.push(new Entity(globalId++, startX, canvas.height/2 + (Math.random()-0.5)*160, 'zhuji', zTeam));
             }
 
             gameActive = true;
-            logPanel.innerHTML = "=== 天道演武·生死內戰開啟！同階級修士已進入互相廝殺狀態 ===";
+            logPanel.innerHTML = "=== 天道演武啟動：大修神識已全開，避彈身法已就緒 ===";
         }
 
-        function gameLoop() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+        // 高精度物理更新（支援倍速累積不丟幀）
+        function updatePhysics() {
             for (let i = entities.length - 1; i >= 0; i--) {
-                let ent = entities[i];
-                if (gameActive) ent.update();
-                ent.draw();
+                entities[i].update();
             }
 
             for (let i = projectiles.length - 1; i >= 0; i--) {
                 let p = projectiles[i];
-                if (gameActive) {
-                    p.x += p.vx; p.y += p.vy;
+                p.x += p.vx; p.y += p.vy;
 
-                    let shouldExplode = false;
-                    let intraRank = document.getElementById('intraRankCombat').checked;
-                    
-                    // 空氣引信判定
-                    for (let ent of entities) {
-                        if (ent.id === p.attackerId) continue;
+                let shouldExplode = false;
+                let intraRank = document.getElementById('intraRankCombat').checked;
+                
+                // 近接引信檢測
+                for (let ent of entities) {
+                    if (ent.id === p.attackerId) continue;
 
-                        let isEnemy = (ent.team !== p.attackerTeam);
-                        if (intraRank && ent.type === p.attackerType) {
-                            isEnemy = true; // 同階視為仇敵，引信觸發
+                    let isEnemy = (ent.team !== p.attackerTeam) || (intraRank && ent.type === p.attackerType);
+                    if (isEnemy) {
+                        let distToEnemy = Math.hypot(ent.x - p.x, ent.y - p.y);
+                        // 當靠近敵人的「感應引信範圍」內，主動凌空引爆
+                        if (distToEnemy <= p.fuseRadius + ent.radius) {
+                            shouldExplode = true; break;
                         }
-
-                        if (isEnemy) {
-                            let distToEnemy = Math.hypot(ent.x - p.x, ent.y - p.y);
-                            if (distToEnemy <= p.fuseRadius + ent.radius) {
-                                shouldExplode = true; break;
-                            }
-                        }
-                    }
-
-                    if (p.x < 0 || p.x > canvas.width || p.y < 0 || p.y > canvas.height) {
-                        shouldExplode = true;
-                    }
-
-                    if (shouldExplode) {
-                        let attackerInfo = { id: p.attackerId, team: p.attackerTeam, type: p.attackerType };
-                        triggerExplosion(p.x, p.y, p.blastRadius, p.damage, attackerInfo, p.type === 'zhuji_laser' ? 'zhuji' : 'lianqi');
-                        projectiles.splice(i, 1);
-                        continue;
                     }
                 }
 
-                ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                ctx.fillStyle = p.color; ctx.shadowBlur = 6; ctx.shadowColor = p.color; ctx.fill(); ctx.shadowBlur = 0;
+                if (p.x < 0 || p.x > canvas.width || p.y < 0 || p.y > canvas.height) {
+                    shouldExplode = true;
+                }
+
+                if (shouldExplode) {
+                    let attackerInfo = { id: p.attackerId, team: p.attackerTeam, type: p.attackerType };
+                    triggerExplosion(p.x, p.y, p.blastRadius, p.damage, attackerInfo, p.type === 'zhuji_laser' ? 'zhuji' : 'lianqi');
+                    projectiles.splice(i, 1);
+                    continue;
+                }
             }
 
+            // 特效與飄字更新
             for (let i = particles.length - 1; i >= 0; i--) {
                 let pt = particles[i];
                 if (pt.isWave) {
-                    if (gameActive) pt.r += pt.type === 'zhuji' ? 6 : 3; 
-                    let alpha = Math.max(0, 1 - (pt.r / pt.maxR));
-                    ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.r, 0, Math.PI * 2);
-                    ctx.strokeStyle = pt.type === 'zhuji' ? `rgba(255, 51, 204, ${alpha * 0.5})` : `rgba(77, 255, 77, ${alpha * 0.6})`;
-                    ctx.lineWidth = pt.type === 'zhuji' ? 4 : 2; ctx.stroke();
-
-                    ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.r * 0.6, 0, Math.PI * 2);
-                    ctx.fillStyle = pt.type === 'zhuji' ? `rgba(255, 51, 204, ${alpha * 0.1})` : `rgba(77, 255, 77, ${alpha * 0.15})`;
-                    ctx.fill();
-
+                    pt.r += pt.type === 'zhuji' ? 5.5 : 2.5; 
                     if (pt.r >= pt.maxR) particles.splice(i, 1);
                 } else {
-                    if (gameActive) { pt.x += pt.vx; pt.y += pt.vy; pt.life--; }
-                    ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.radius, 0, Math.PI * 2);
-                    ctx.fillStyle = pt.color; ctx.fill();
+                    pt.x += pt.vx; pt.y += pt.vy; pt.life--;
                     if (pt.life <= 0) particles.splice(i, 1);
                 }
             }
 
             for (let i = floatingTexts.length - 1; i >= 0; i--) {
-                let ft = floatingTexts[i]; if (gameActive) { ft.y -= 0.6; ft.life--; }
-                ctx.fillStyle = ft.color; ctx.font = 'bold 11px monospace'; ctx.textAlign = 'center';
-                ctx.fillText(ft.text, ft.x, ft.y);
+                let ft = floatingTexts[i]; ft.y -= 0.5; ft.life--;
                 if (ft.life <= 0) floatingTexts.splice(i, 1);
             }
 
-            if (gameActive) checkEndCondition();
+            checkEndCondition();
+        }
+
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 神識時間步進累積器 (實現穩定的戰鬥速度切換)
+            if (gameActive) {
+                let simScale = parseFloat(document.getElementById('timeScale').value) || 1.0;
+                speedAccumulator += simScale;
+                while (speedAccumulator >= 1.0) {
+                    updatePhysics();
+                    speedAccumulator -= 1.0;
+                }
+            }
+
+            // 【渲染層】
+            for (let ent of entities) ent.draw();
+
+            for (let p of projectiles) {
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fillStyle = p.color; ctx.shadowBlur = 5; ctx.shadowColor = p.color; ctx.fill(); ctx.shadowBlur = 0;
+            }
+
+            for (let pt of particles) {
+                if (pt.isWave) {
+                    let alpha = Math.max(0, 1 - (pt.r / pt.maxR));
+                    ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.r, 0, Math.PI * 2);
+                    ctx.strokeStyle = pt.type === 'zhuji' ? `rgba(255, 51, 204, ${alpha * 0.45})` : `rgba(77, 255, 77, ${alpha * 0.55})`;
+                    ctx.lineWidth = pt.type === 'zhuji' ? 4 : 2; ctx.stroke();
+                } else {
+                    ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = pt.color; ctx.fill();
+                }
+            }
+
+            for (let ft of floatingTexts) {
+                ctx.fillStyle = ft.color; ctx.font = 'bold 11px monospace'; ctx.textAlign = 'center';
+                ctx.fillText(ft.text, ft.x, ft.y);
+            }
+
             requestAnimationFrame(gameLoop);
         }
 
         function checkEndCondition() {
             let intraRank = document.getElementById('intraRankCombat').checked;
-            
             if (intraRank) {
-                // 生死內戰模式：打到場上只剩最後一個人
                 if (entities.length <= 1) {
                     if (entities.length === 1) {
-                        addLog(`🏆 【演武結束】 最終獲勝者：${CONFIG[entities[0].type].name} (陣營 ${entities[0].team}) 唯我獨尊，笑傲諸天！`);
+                        addLog(`🏆 【演武勝出】 最終獲勝：${CONFIG[entities[0].type].name} (隊伍 ${entities[0].team}) 身法通神，傲視全場！`);
                     } else {
-                        addLog(`💀 【同歸於盡】 空氣引信引發連環核爆，全場無人生還！`);
+                        addLog(`💀 【玉石俱焚】 全員皆未能躲過連環衝擊波，戰場化作死寂！`);
                     }
                     gameActive = false;
                 }
             } else {
-                // 普通陣營對抗模式
                 let teams = new Set(entities.map(e => e.team));
                 if (teams.size <= 1 && entities.length > 0) {
-                    let winTeam = [...teams][0];
-                    addLog(`🏆 【演武結束】 最終由 陣營 [隊伍 ${winTeam}] 活到最後！`);
+                    addLog(`🏆 【演武結束】 陣營 [隊伍 ${[...teams][0]}] 活到了最後！`);
                     gameActive = false;
                 } else if (entities.length === 0) {
-                    addLog(`💀 【同歸於盡】 全場玉石俱焚！`);
                     gameActive = false;
                 }
             }
