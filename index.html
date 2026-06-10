@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>高維修仙數據演武場 - 納秒光速觀測版</title>
+    <title>高維修仙數據演武場 - 時空解封與燃魂免疫版</title>
     <style>
         body {
             margin: 0; padding: 15px;
@@ -59,14 +59,14 @@
         canvas { background-color: #010102; border: 2px solid #12121a; border-radius: 6px; }
         #log-panel {
             margin-top: 5px; background: #020205; padding: 6px; border-radius: 6px;
-            width: 100%; max-width: 1180px; height: 115px; overflow-y: auto;
+            width: 100%; max-width: 1180px; height: 125px; overflow-y: auto;
             font-family: monospace; font-size: 11px; color: #a4e3e6; border: 1px solid #0e0e18;
         }
     </style>
 </head>
 <body>
 
-    <h1>高維修仙戰鬥模擬器 (納秒光速解析與死地反擊版)</h1>
+    <h1>高維修仙戰鬥模擬器 (時空自動解封與燃魂免疫版)</h1>
     
     <div class="timer-container">
         <div class="t-real">🖥️ 現實觀測時間: <span id="realTimeDisplay">0.00</span> 秒</div>
@@ -130,7 +130,7 @@
     </div>
 
     <canvas id="arena" width="1150" height="500"></canvas>
-    <div id="log-panel">=== 演武天幕重組：極微觀100納秒觀測切片、死地燃魂反擊機制已全面實裝 ===</div>
+    <div id="log-panel">=== 演武天幕重組：極微觀相對論免疫、時空自動解封機制已全面實裝 ===</div>
 
     <script>
         const canvas = document.getElementById('arena');
@@ -195,7 +195,7 @@
                 
                 this.teleportCharges = 3;
                 this.teleportCdTimer = 0;
-                this.burnSoulTimer = 0; // 燃魂衝鋒計時器
+                this.burnSoulTimer = 0; 
                 
                 this.lingyaDebuff = 0; this.isDeterred = false; this.suppressors = [];
             }
@@ -209,6 +209,19 @@
             }
 
             update(dt) {
+                let timeScale = parseFloat(document.getElementById('timeScale').value) || 1.0;
+                
+                // 🔥 【法理修正：燃魂時空豁免權】
+                // 如果處於燃魂反擊期，且時間流速低於0.1x，該個體強制獲得時間增益，使其在現實世界中能流暢反擊
+                let relativityCompensation = 1.0;
+                if (this.burnSoulTimer > 0 && timeScale < 0.1) {
+                    relativityCompensation = 0.1 / timeScale; // 補償至至少 0.1x 的體感速率
+                    
+                    // 讓燃魂計時器和攻擊冷卻在現實時間中加速扣除，不被時空冰凍卡死
+                    this.burnSoulTimer -= dt * (relativityCompensation - 1);
+                    if (this.attackCdTimer > 0) this.attackCdTimer -= dt * (relativityCompensation - 1);
+                }
+
                 if (this.attackCdTimer > 0) this.attackCdTimer -= dt;
                 if (this.burnSoulTimer > 0) this.burnSoulTimer -= dt;
 
@@ -239,12 +252,12 @@
                     }
                 }
 
-                // 2. 計算移動速度（若處於燃魂狀態，獲得3倍速度增幅以消除死角）
+                // 2. 計算移動速度（融入燃魂時空補償）
                 let finalSpeed = this.speed;
-                if (this.burnSoulTimer > 0) finalSpeed *= 3.5; 
+                if (this.burnSoulTimer > 0) finalSpeed *= 3.5 * relativityCompensation; 
                 
                 if (this.isDodging && (this.type === 'zhuji' || this.type === 'jindan')) {
-                    finalSpeed = DATA_CONFIG[this.type].escapeSpeed * (this.burnSoulTimer > 0 ? 2 : 1);
+                    finalSpeed = DATA_CONFIG[this.type].escapeSpeed * (this.burnSoulTimer > 0 ? 2 : 1) * (this.burnSoulTimer > 0 ? relativityCompensation : 1);
                 }
                 if (this.isDeterred) finalSpeed *= 0.12; 
                 else if (this.lingyaDebuff > 0) finalSpeed *= Math.max(0.05, 1 - this.lingyaDebuff);
@@ -298,7 +311,8 @@
                     if (enemy) {
                         let ang = Math.atan2(enemy.y - this.y, enemy.x - this.x);
                         let dist = Math.hypot(enemy.x - this.x, enemy.y - this.y);
-                        // 如果在燃魂狀態，強制貼臉逼近
+                        
+                        // 燃魂狀態下，強制貼臉逼近
                         let idealDist = this.burnSoulTimer > 0 ? 10 : (this.type === 'mortal' ? 1 : conf.range * 0.4);
                         let moveAngle = ang;
                         if (this.type !== 'mortal' && this.burnSoulTimer <= 0) {
@@ -373,9 +387,6 @@
                             fuseRadius: conf.fuseRadius, blastRadius: conf.blastRadius
                         });
                     }
-                    if (Math.hypot(target.x - this.x, target.y - this.y) < 150 && target.rank < 3) {
-                        addLog(totalSimulatedTime, `👁️ [搜魂術] 金丹大能(ID:${this.id}) 強制讀取低階修士(ID:${target.id}) 的記憶！`);
-                    }
                 }
             }
 
@@ -404,13 +415,13 @@
                 }
 
                 if (this.hpPercent <= 0) {
-                    // 🧬 金丹降境重生：徹底解決「卡死不攻擊」Bug
+                    // 🧬 金丹降境重生
                     if (this.type === 'jindan') {
                         addLog(totalSimulatedTime, `🧬 【神魂重塑】 金丹大能(ID:${this.id}) 金丹碎滅！消耗千年壽命重聚神魂，跌落至【築基期】！`);
                         this.loadRankStats('zhuji'); 
-                        this.hpPercent = 1.0;          // 賦予圓滿築基血量
-                        this.attackCdTimer = 0;        // 🔥 法則修正：重置冷卻，允許立刻反擊
-                        this.burnSoulTimer = 3.0;      // 🔥 法則修正：獲得 3 秒燃魂爆發速度，強行拉近縮短的射程
+                        this.hpPercent = 1.0;          
+                        this.attackCdTimer = 0;        
+                        this.burnSoulTimer = 3.0;      // 獲得3秒相對論免疫爆發期
                         this.hasReborn = true; 
                         floatingTexts.push({ x: this.x, y: this.y - 35, text: `🧬 降境重生·燃魂反擊！`, color: '#ff33cc', life: 40 });
                     } 
@@ -527,7 +538,7 @@
             for (let i = 0; i < jCount; i++) entities.push(new Entity(globalId++, canvas.width/2 + (Math.random()-0.5)*100, canvas.height/2 + (Math.random()-0.5)*100, 'jindan', jTeam));
 
             gameActive = true;
-            logPanel.innerHTML = "=== 天道輪迴重組：微觀觀測開啟，死地燃魂反擊已就緒 ===";
+            logPanel.innerHTML = "=== 天道輪迴重組：微觀觀測開啟，相對論豁免已就緒 ===";
         }
 
         function advancePhysicsStep(dt) {
@@ -585,9 +596,18 @@
 
             if (gameActive) {
                 totalRealTime += frameDelta;
-                let timeScale = parseFloat(document.getElementById('timeScale').value) || 1.0;
+                let timeScaleSelect = document.getElementById('timeScale');
+                let timeScale = parseFloat(timeScaleSelect.value) || 1.0;
                 
-                // 針對極低時間流速，動態調整採樣步長，確保高精確度而不卡死
+                // 🔥 【法理修正：天道時空自動解封機制】
+                // 檢查戰場上是否還有任何活著的金丹期大能
+                let hasJindan = entities.some(e => e.type === 'jindan');
+                if (!hasJindan && timeScale < 0.1) {
+                    timeScaleSelect.value = "0.1"; // 自動切換回常規慢速
+                    timeScale = 0.1;
+                    addLog(totalSimulatedTime, "🌌 【天道時空解封】 戰場已無金丹大能！極微觀時空自動解除，流速恢復至 0.1x 慢速解析！");
+                }
+
                 let steps = timeScale < 0.001 ? 1 : (timeScale > 10 ? 25 : 12); 
                 let step_dt = (frameDelta * timeScale) / steps;
                 
