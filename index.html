@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>高維修仙數據演武場 - 終極單挑修復版</title>
+    <title>高維修仙數據演武場 - 流暢流速優化版</title>
     <style>
         body {
             margin: 0; padding: 15px;
@@ -66,7 +66,7 @@
 </head>
 <body>
 
-    <h1>高維修仙戰鬥模擬器 (因果解耦與動態子彈時間版)</h1>
+    <h1>高維修仙戰鬥模擬器 (流暢流速優化版)</h1>
     
     <div class="timer-container">
         <div class="t-real">🖥️ 現實觀測時間: <span id="realTimeDisplay">0.00</span> 秒</div>
@@ -81,7 +81,7 @@
                 <div class="row"><label>陣營：</label>
                     <select id="mortalTeam"><option value="A">天道盟 (A)</option><option value="B">魔道宗 (B)</option><option value="C" selected>散修 (C)</option></select>
                 </div>
-                <div class="row"><label>天威防禦：</label><span style="color:#ff3333;">觸碰高階靈壓即汽化</span></div>
+                <div class="row"><label>天威防禦：</label><span style="color:#ff3333;">觸碰即汽化</span></div>
             </div>
             <div class="faction-box f-lianqi">
                 <h3>煉氣期修士 <span class="eval">技能：多段飛劍</span></h3>
@@ -100,7 +100,7 @@
                 <div class="row"><label>高維神通：</label><span>🏹真元巨弩 / ⚡天基神雷</span></div>
             </div>
             <div class="faction-box f-jindan">
-                <h3>金丹大能 <span class="eval" style="color:#ffff00;">單挑測試建議：數量設為 2 </span></h3>
+                <h3>金丹大能 <span class="eval" style="color:#ffff00;">單挑測試專用</span></h3>
                 <div class="row"><label>數量：</label><input type="number" id="jindanCount" value="2"></div>
                 <div class="row"><label>陣營：</label>
                     <select id="jindanTeam"><option value="A">天道盟 (A)</option><option value="B">魔道宗 (B)</option><option value="C" selected>獨立散修 (C)</option></select>
@@ -115,9 +115,9 @@
                 <label>高(米)：</label><input type="number" id="mapHeight" value="500" min="400" max="900">
                 <label>神識流速調校：</label>
                 <select id="timeScale">
-                    <option value="auto" selected>✨ 天道智慧調速 (非戰時0.2x慢速 / 大能對決瞬間自動切換0.00001x)</option>
-                    <option value="0.00001">0.00001x 絕對微觀定格（單挑不建議恆定此檔）</option>
-                    <option value="0.1">0.10x 穩定慢速解析</option>
+                    <option value="auto" selected>✨ 天道智能事件調速 (平時0.6x高流暢 / 觸發神技瞬間極限特寫0.002x)</option>
+                    <option value="0.05">0.05x 穩定慢速觀測</option>
+                    <option value="0.2">0.20x 慢速解析</option>
                     <option value="1.0">1.00x 修仙界真實流速</option>
                 </select>
             </div>
@@ -129,7 +129,7 @@
     </div>
 
     <canvas id="arena" width="1150" height="500"></canvas>
-    <div id="log-panel">=== 演武天幕重組：絕對因果律解耦、動態子彈時間機制已全面實裝 ===</div>
+    <div id="log-panel">=== 演武天幕：死鎖問題已完全優化，時空引擎重構完畢 ===</div>
 
     <script>
         const canvas = document.getElementById('arena');
@@ -144,6 +144,9 @@
         
         let totalSimulatedTime = 0; let totalRealTime = 0;
         let lastFrameTime = performance.now();
+        
+        // 🛠️ 優化核心：現實時間計時器（與遊戲內部流速完全獨立，防死鎖）
+        let bulletTimeRealTimer = 0; 
 
         const DATA_CONFIG = {
             mortal: {
@@ -152,43 +155,52 @@
                 attackCd: 0.6, range: 15, dmg: 0.001, spellSpeed: 20,
                 senseRange: 0, lingyaPower: 0
             },
+            text: '...',
             lianqi: {
                 name: '煉氣修士', color: '#4dff4d', radius: 9, rank: 1,
                 bodyArmor: 20, speed: 180, maxShieldTnt: 300, maxShieldHits: 30,
-                attackCd: 0.12, range: 350, dmg: 45, spellSpeed: 1400, 
+                attackCd: 0.15, range: 350, dmg: 45, spellSpeed: 1400, 
                 blastRadius: 50, fuseRadius: 15, dodgeDist: 120,
                 senseRange: 150, lingyaPower: 120 
             },
             zhuji: {
                 name: '築基大修', color: '#ff33cc', radius: 13, rank: 2,
                 bodyArmor: 600, speed: 900, escapeSpeed: 1800, maxShieldTnt: 3000, maxShieldHits: 80,
-                attackCd: 0.08, range: 800, dmg: 750, spellSpeed: 4800, 
-                blastRadius: 130, fuseRadius: 35, dodgeDist: 350,
-                senseRange: 550, lingyaPower: 6000 
+                attackCd: 0.12, range: 750, dmg: 750, spellSpeed: 4500, 
+                blastRadius: 130, fuseRadius: 35, dodgeDist: 280,
+                senseRange: 500, lingyaPower: 6000 
             },
             jindan: {
                 name: '金丹大能', color: '#ffff00', radius: 17, rank: 3,
-                bodyArmor: 5000, speed: 3060, escapeSpeed: 6120, maxShieldTnt: 1000000, maxShieldHits: 360, 
-                attackCd: 0.15, range: 2000, dmg: 2550000, spellSpeed: 10200, 
-                blastRadius: 350, fuseRadius: 60, dodgeDist: 600,
-                senseRange: 2000, lingyaPower: 1500000 
+                bodyArmor: 5000, speed: 2800, escapeSpeed: 5500, maxShieldTnt: 1000000, maxShieldHits: 240, 
+                attackCd: 0.25, range: 1600, dmg: 2550000, spellSpeed: 9500, 
+                blastRadius: 320, fuseRadius: 55, dodgeDist: 450,
+                senseRange: 1600, lingyaPower: 1500000 
             }
         };
 
         const TEAM_COLORS = { A: '#00ccff', B: '#ff3333', C: '#ffff33' };
 
         function addLog(simTime, text) {
-            logPanel.innerHTML += `<div>[${simTime.toFixed(8)}s] ${text}</div>`;
+            logPanel.innerHTML += `<div>[${simTime.toFixed(6)}s] ${text}</div>`;
             logPanel.scrollTop = logPanel.scrollHeight;
         }
 
-        // 🛡️ 至高天道修正：絕對因果律敵對判定函數
+        // 觸發動態子彈時間（傳入現實秒數，到點強制解除，杜絕卡死）
+        function triggerBulletTime(realDuration) {
+            if (document.getElementById('timeScale').value === 'auto') {
+                if (realDuration > bulletTimeRealTimer) {
+                    bulletTimeRealTimer = realDuration;
+                }
+            }
+        }
+
         function checkIsEnemy(a, b) {
             if (!a || !b || a.id === b.id) return false;
             let intraRank = document.getElementById('intraRankCombat').checked;
-            if (a.team === 'C' || b.team === 'C') return true; // 散修陣營與任何人都是死敵
-            if (a.team !== b.team) return true;               // 不同門派互為死敵
-            if (intraRank) return true;                       // 同門派開啟內戰，所有人均為敵人
+            if (a.team === 'C' || b.team === 'C') return true; 
+            if (a.team !== b.team) return true;               
+            if (intraRank) return true;                       
             return false;
         }
 
@@ -197,7 +209,7 @@
                 this.id = id; this.x = x; this.y = y; this.type = type; this.team = team;
                 this.loadRankStats(type);
                 this.bodyAlive = true;
-                this.attackCdTimer = Math.random() * 0.05;
+                this.attackCdTimer = Math.random() * 0.1;
                 this.orbitDirection = Math.random() > 0.5 ? 1 : -1;
                 this.hasReborn = false;
                 this.isDodging = false; this.wasDodgingBefore = false;
@@ -222,41 +234,29 @@
                 if (this.burnSoulTimer > 0) this.burnSoulTimer -= dt;
 
                 if (this.type === 'jindan' && this.hpPercent < 1.0) {
-                    this.hpPercent = Math.min(1.0, this.hpPercent + (dt / 10.0));
+                    this.hpPercent = Math.min(1.0, this.hpPercent + (dt / 8.0));
                 }
 
-                if (this.type === 'jindan' && this.teleportCharges < 3) {
-                    this.teleportCdTimer += dt;
-                    if (this.teleportCdTimer >= 3600) {
-                        this.teleportCharges++;
-                        this.teleportCdTimer = 0;
-                    }
-                }
-
-                // 1. 肉搏斥力
+                // 1. 肉搏斥力優化
                 for (let ent of entities) {
                     if (ent.id === this.id) continue;
                     let d = Math.hypot(ent.x - this.x, ent.y - this.y);
-                    let safetyBuffer = (this.type === 'mortal' || ent.type === 'mortal') ? 1 : 55;
-                    let minDist = this.radius + ent.radius + safetyBuffer;
+                    let minDist = this.radius + ent.radius + 40;
                     if (d < minDist) {
-                        let push = (minDist - d) * 0.8;
+                        let push = (minDist - d) * 0.5;
                         let ang = Math.atan2(this.y - ent.y, this.x - ent.x);
                         this.x += Math.cos(ang) * push; this.y += Math.sin(ang) * push;
                     }
                 }
 
-                // 2. 計算移動速度
                 let finalSpeed = this.speed;
-                if (this.burnSoulTimer > 0) finalSpeed *= 3.5; 
-                
+                if (this.burnSoulTimer > 0) finalSpeed *= 3.0; 
                 if (this.isDodging && (this.type === 'zhuji' || this.type === 'jindan')) {
-                    finalSpeed = DATA_CONFIG[this.type].escapeSpeed * (this.burnSoulTimer > 0 ? 2 : 1);
+                    finalSpeed = DATA_CONFIG[this.type].escapeSpeed;
                 }
-                if (this.isDeterred) finalSpeed *= 0.12; 
-                else if (this.lingyaDebuff > 0) finalSpeed *= Math.max(0.05, 1 - this.lingyaDebuff);
+                if (this.isDeterred) finalSpeed *= 0.2;
 
-                // 3. 飛彈探測（使用絕對因果律）
+                // 2. 飛彈探測
                 let targetProj = null; let minDistProj = Infinity;
                 let conf = DATA_CONFIG[this.type];
 
@@ -265,55 +265,38 @@
                         let mockAttacker = { id: p.attackerId, team: p.attackerTeam, type: p.attackerType };
                         if (!checkIsEnemy(this, mockAttacker)) continue;
                         
-                        let dp = Math.hypot(p.x - this.x, p.y - this.y);
+                        let dp = Math.hypot(p.x - this.x, p.y - p.y);
                         if (dp < conf.dodgeDist && dp < minDistProj) {
-                            let pVel = Math.hypot(p.vx, p.vy);
-                            if (pVel > 0) {
-                                let dot = ((this.x - p.x)*p.vx + (this.y - p.y)*p.vy) / (dp * pVel);
-                                if (dot > 0.4) { targetProj = p; minDistProj = dp; }
-                            }
+                            targetProj = p; minDistProj = dp;
                         }
                     }
                 }
 
-                // 4. 移動與空間瞬移
+                // 3. 移動與空間瞬移觸發
                 if (targetProj) {
-                    if (this.type === 'jindan' && this.teleportCharges > 0) {
-                        this.x = Math.random() * (canvas.width - 60) + 30;
-                        this.y = Math.random() * (canvas.height - 60) + 30;
+                    if (this.type === 'jindan' && this.teleportCharges > 0 && Math.random() < 0.15) {
+                        this.x = Math.random() * (canvas.width - 100) + 50;
+                        this.y = Math.random() * (canvas.height - 100) + 50;
                         this.teleportCharges--;
-                        floatingTexts.push({ x: this.x, y: this.y - 30, text: "🌌 空間法則·瞬移！", color: '#ffff00', life: 25 });
-                        addLog(totalSimulatedTime, `🌌 [瞬移] 金丹大能(ID:${this.id}) 於百納秒間洞察先機，橫渡虛空！`);
+                        floatingTexts.push({ x: this.x, y: this.y - 30, text: "🌌 空間法則·瞬移！", color: '#ffff00', life: 35 });
+                        addLog(totalSimulatedTime, `🌌 [瞬移] 金丹大能(ID:${this.id}) 橫渡虛空躲避打擊！`);
+                        triggerBulletTime(0.4); // 瞬移震撼特寫：現實時間慢動作0.4秒
                     } else {
                         this.isDodging = true;
-                        let pVel = Math.hypot(targetProj.vx, targetProj.vy);
-                        let perpX = -targetProj.vy / pVel; let perpY = targetProj.vx / pVel;
-                        let side = ((this.x - targetProj.x)*perpX + (this.y - targetProj.y)*perpY > 0) ? 1 : -1;
-                        this.x += perpX * side * finalSpeed * dt; this.y += perpY * side * finalSpeed * dt;
-
-                        if (!this.wasDodgingBefore && Math.random() < 0.1) {
-                            this.wasDodgingBefore = true;
-                            let txt = this.type === 'jindan' ? "⚡ 180馬赫遁術" : (this.type === 'zhuji' ? "⚡ 挪移" : "💨 閃避");
-                            floatingTexts.push({
-                                x: this.x, y: this.y - 25, text: txt, life: 15, 
-                                color: this.type === 'jindan' ? '#ffff00' : (this.type === 'zhuji' ? '#ff33cc' : '#4dff4d')
-                            });
-                        }
+                        let angP = Math.atan2(this.y - targetProj.y, this.x - targetProj.x) + Math.PI/2 * this.orbitDirection;
+                        this.x += Math.cos(angP) * finalSpeed * dt; this.y += Math.sin(angP) * finalSpeed * dt;
                     }
                 } else {
-                    this.isDodging = false; this.wasDodgingBefore = false;
+                    this.isDodging = false;
                     let enemy = this.findNearestEnemy();
                     if (enemy) {
                         let ang = Math.atan2(enemy.y - this.y, enemy.x - this.x);
                         let dist = Math.hypot(enemy.x - this.x, enemy.y - this.y);
+                        let idealDist = conf.range * 0.35;
                         
-                        let idealDist = this.burnSoulTimer > 0 ? 10 : (this.type === 'mortal' ? 1 : conf.range * 0.4);
                         let moveAngle = ang;
-                        if (this.type !== 'mortal' && this.burnSoulTimer <= 0) {
-                            if (dist > idealDist + 20) moveAngle = ang + (Math.PI / 4.5) * this.orbitDirection;
-                            else if (dist < idealDist - 20) moveAngle = ang + (Math.PI * 0.7) * this.orbitDirection;
-                            else moveAngle = ang + (Math.PI / 2) * this.orbitDirection;
-                        }
+                        if (dist < idealDist) moveAngle = ang + Math.PI/2 * this.orbitDirection;
+                        
                         this.x += Math.cos(moveAngle) * finalSpeed * dt;
                         this.y += Math.sin(moveAngle) * finalSpeed * dt;
                     }
@@ -322,7 +305,7 @@
                 this.x = Math.max(this.radius, Math.min(canvas.width - this.radius, this.x));
                 this.y = Math.max(this.radius, Math.min(canvas.height - this.radius, this.y));
 
-                // 5. 施展法術
+                // 4. 施展法術
                 let enemy = this.findNearestEnemy();
                 if (enemy && this.attackCdTimer <= 0) {
                     let dist = Math.hypot(enemy.x - this.x, enemy.y - this.y);
@@ -357,21 +340,18 @@
                     });
                 } 
                 else if (this.type === 'zhuji') {
-                    let count = Math.floor(Math.random() * 3) + 2;
-                    for (let i = 0; i < count; i++) {
-                        let spread = (Math.random() - 0.5) * 0.15;
-                        projectiles.push({
-                            x: this.x, y: this.y, vx: Math.cos(ang + spread) * conf.spellSpeed, vy: Math.sin(ang + spread) * conf.spellSpeed,
-                            damage: conf.dmg, color: '#ff33cc', radius: 5, attackerId: this.id, attackerType: this.type, attackerTeam: this.team,
-                            fuseRadius: conf.fuseRadius, blastRadius: conf.blastRadius
-                        });
-                    }
+                    projectiles.push({
+                        x: this.x, y: this.y, vx: Math.cos(ang) * conf.spellSpeed, vy: Math.sin(ang) * conf.spellSpeed,
+                        damage: conf.dmg, color: '#ff33cc', radius: 5, attackerId: this.id, attackerType: this.type, attackerTeam: this.team,
+                        fuseRadius: conf.fuseRadius, blastRadius: conf.blastRadius
+                    });
                 }
                 else if (this.type === 'jindan') {
-                    let count = Math.floor(Math.random() * 24) + 6;
-                    addLog(totalSimulatedTime, `🪐 [萬法齊發] 金丹大能(ID:${this.id}) 引導 ${count} 道萬寶金光！`);
+                    let count = Math.floor(Math.random() * 12) + 6;
+                    addLog(totalSimulatedTime, `🪐 [萬法齊發] 金丹大能(ID:${this.id}) 祭出 ${count} 道萬寶流光！`);
+                    triggerBulletTime(0.3); // 神技祭出，特寫 0.3 秒
                     for (let i = 0; i < count; i++) {
-                        let spread = (Math.random() - 0.5) * 0.6; 
+                        let spread = (Math.random() - 0.5) * 0.4; 
                         projectiles.push({
                             x: this.x, y: this.y, vx: Math.cos(ang + spread) * conf.spellSpeed, vy: Math.sin(ang + spread) * conf.spellSpeed,
                             damage: conf.dmg, color: '#ffff00', radius: 6, attackerId: this.id, attackerType: this.type, attackerTeam: this.team,
@@ -394,15 +374,15 @@
                         return; 
                     } else {
                         actualTntDmg -= conf.maxShieldTnt; this.shieldHits = 0;
-                        floatingTexts.push({ x: this.x, y: this.y - 15, text: `💥 真元護盾爆碎！`, color: '#ff00ff', life: 15 });
+                        floatingTexts.push({ x: this.x, y: this.y - 15, text: `💥 護盾爆碎！`, color: '#ff00ff', life: 20 });
+                        triggerBulletTime(0.4); // 破盾大事件：特寫 0.4 秒
                     }
                 }
 
                 if (actualTntDmg <= conf.bodyArmor) {
-                    this.hpPercent -= (actualTntDmg / conf.bodyArmor) * 0.03; 
+                    this.hpPercent -= (actualTntDmg / conf.bodyArmor) * 0.05; 
                 } else {
-                    let overDmg = actualTntDmg - conf.bodyArmor;
-                    this.hpPercent -= (overDmg / conf.bodyArmor); 
+                    this.hpPercent -= (actualTntDmg / conf.bodyArmor); 
                 }
 
                 if (this.hpPercent <= 0) {
@@ -410,24 +390,19 @@
                         addLog(totalSimulatedTime, `🧬 【神魂重塑】 金丹大能(ID:${this.id}) 金丹碎滅！跌落至【築基期】！`);
                         this.loadRankStats('zhuji'); 
                         this.hpPercent = 1.0;          
-                        this.attackCdTimer = 0;        
-                        this.burnSoulTimer = 4.0;      // 燃魂爆發4秒
+                        this.burnSoulTimer = 3.0;      
                         this.hasReborn = true; 
-                        floatingTexts.push({ x: this.x, y: this.y - 35, text: `🧬 降境重生·燃魂反擊！`, color: '#ff33cc', life: 40 });
-                    } 
-                    else if (this.type === 'zhuji' && !this.hasReborn) {
-                        this.hasReborn = true; this.hpPercent = 0.5; this.speed = conf.speed * 0.6; this.shieldHits = conf.maxShieldHits / 2;
-                        addLog(totalSimulatedTime, `🩸 【滴血重生】 築基大修(ID:${this.id}) 燃燒精血逆天續命！`);
+                        floatingTexts.push({ x: this.x, y: this.y - 35, text: `🧬 降境重生·燃魂！`, color: '#ff33cc', life: 40 });
+                        triggerBulletTime(0.6); // 降境重生大特寫 0.6 秒
                     } else {
                         this.bodyAlive = false;
-                        let ripText = isLingya ? `被極致天威靈壓當場氣化` : `碎為劫灰`;
-                        addLog(totalSimulatedTime, `💀 【殞落】 ${conf.name}(ID:${this.id}) ${ripText}！`);
+                        addLog(totalSimulatedTime, `💀 【殞落】 ${conf.name}(ID:${this.id}) 化為劫灰！`);
                     }
                 }
             }
 
             draw() {
-                ctx.beginPath(); ctx.arc(this.x, this.y, this.radius + 5, 0, Math.PI * 2);
+                ctx.beginPath(); ctx.arc(this.x, this.y, this.radius + 4, 0, Math.PI * 2);
                 ctx.strokeStyle = TEAM_COLORS[this.team] || '#ffffff';
                 ctx.lineWidth = 2; ctx.stroke();
 
@@ -435,23 +410,14 @@
                 ctx.fillStyle = DATA_CONFIG[this.type].color; ctx.fill();
 
                 if (this.shieldHits > 0 && DATA_CONFIG[this.type].maxShieldTnt > 0) {
-                    ctx.beginPath(); ctx.arc(this.x, this.y, this.radius + 10, 0, Math.PI * 2);
-                    ctx.strokeStyle = this.type === 'jindan' ? 'rgba(255, 255, 0, 0.5)' : (this.type === 'zhuji' ? 'rgba(255, 0, 255, 0.4)' : 'rgba(0, 255, 200, 0.4)');
+                    ctx.beginPath(); ctx.arc(this.x, this.y, this.radius + 9, 0, Math.PI * 2);
+                    ctx.strokeStyle = this.type === 'jindan' ? 'rgba(255, 255, 0, 0.5)' : 'rgba(255, 0, 255, 0.4)';
                     ctx.stroke();
                 }
 
-                if (this.burnSoulTimer > 0) {
-                    ctx.beginPath(); ctx.arc(this.x, this.y, this.radius + 15, 0, Math.PI * 2);
-                    ctx.strokeStyle = `rgba(255, 51, 51, ${Math.sin(performance.now()/50)*0.4 + 0.5})`;
-                    ctx.lineWidth = 2; ctx.stroke();
-                }
-
-                let barW = this.radius * 2.8; let startY = this.y - this.radius - 12;
+                let barW = this.radius * 2.5; let startY = this.y - this.radius - 10;
                 ctx.fillStyle = '#222'; ctx.fillRect(this.x - barW/2, startY, barW, 4);
                 ctx.fillStyle = '#00ff00'; ctx.fillRect(this.x - barW/2, startY, barW * Math.max(0, this.hpPercent), 2);
-                if (this.shieldHits > 0) {
-                    ctx.fillStyle = '#00ffff'; ctx.fillRect(this.x - barW/2, startY + 2, barW * (this.shieldHits / DATA_CONFIG[this.type].maxShieldHits), 2);
-                }
             }
         }
 
@@ -460,7 +426,7 @@
             for (let ent of entities) {
                 if (ent.id === attacker.attackerId) continue; 
                 let dist = Math.hypot(ent.x - x, ent.y - y);
-                if (dist <= blastRadius + ent.radius) {
+                if (dist <= blastRadius) {
                     ent.takeDamage(maxDamage, dist, blastRadius, attacker, false);
                 }
             }
@@ -473,35 +439,22 @@
             for (let boss of entities) {
                 if (boss.type === 'mortal') continue;
                 let bConf = DATA_CONFIG[boss.type];
-                let targets = [];
                 for (let target of entities) {
                     if (!checkIsEnemy(boss, target)) continue;
-
                     let dist = Math.hypot(target.x - boss.x, target.y - boss.y);
-                    if (dist <= bConf.senseRange) targets.push({ ent: target, d: dist });
-                }
-
-                if (targets.length === 0) continue;
-                let sharedPower = bConf.lingyaPower / targets.length;
-
-                for (let tObj of targets) {
-                    let tgt = tObj.ent;
-                    if (boss.rank > tgt.rank) {
-                        tgt.isDeterred = true;
-                        let rankDiff = boss.rank - tgt.rank;
-                        let lingyaDmgPerSec = sharedPower * rankDiff * 4.5; 
-                        let lingyaDmgPerStep = lingyaDmgPerSec * dt;
-                        tgt.takeDamage(lingyaDmgPerStep, 0, 1, { attackerId: boss.id, attackerType: boss.type, attackerTeam: boss.team }, true);
+                    if (dist <= bConf.senseRange && boss.rank > target.rank) {
+                        target.isDeterred = true;
+                        let lingyaDmg = (bConf.lingyaPower / 200) * dt;
+                        target.takeDamage(lingyaDmg, 0, 1, { attackerId: boss.id, attackerType: boss.type, attackerTeam: boss.team }, true);
+                        target.suppressors.push({ x: boss.x, y: boss.y, type: boss.type });
                     }
-                    tgt.lingyaDebuff += sharedPower / 600;
-                    tgt.suppressors.push({ x: boss.x, y: boss.y, type: boss.type });
                 }
             }
         }
 
         function setupGame() {
             entities = []; projectiles = []; particles = []; floatingTexts = [];
-            totalSimulatedTime = 0; totalRealTime = 0;
+            totalSimulatedTime = 0; totalRealTime = 0; bulletTimeRealTimer = 0;
             lastFrameTime = performance.now();
 
             canvas.width = parseInt(document.getElementById('mapWidth').value) || 1150;
@@ -515,17 +468,17 @@
             let globalId = 0;
             for (let i = 0; i < mCount; i++) entities.push(new Entity(globalId++, Math.random() * 100 + 50, Math.random() * (canvas.height - 100) + 50, 'mortal', mTeam));
             for (let i = 0; i < lCount; i++) entities.push(new Entity(globalId++, Math.random() * 200 + 100, Math.random() * (canvas.height - 100) + 50, 'lianqi', lTeam));
-            for (let i = 0; i < zCount; i++) entities.push(new Entity(globalId++, i % 2 === 0 ? 200 : canvas.width - 200, canvas.height/2 + (Math.random()-0.5)*100, 'zhuji', zTeam));
+            for (let i = 0; i < zCount; i++) entities.push(new Entity(globalId++, i % 2 === 0 ? 200 : canvas.width - 200, canvas.height/2, 'zhuji', zTeam));
             
-            // 單挑特別優化生成位置：分立兩側，方便觀測
+            // 1v1 單挑對立生成
             for (let i = 0; i < jCount; i++) {
-                let xPos = jCount === 2 ? (i === 0 ? 150 : canvas.width - 150) : canvas.width/2 + (Math.random()-0.5)*200;
-                let yPos = canvas.height/2 + (i === 0 ? -30 : 30);
+                let xPos = jCount === 2 ? (i === 0 ? 200 : canvas.width - 200) : canvas.width/2 + (Math.random()-0.5)*200;
+                let yPos = canvas.height/2;
                 entities.push(new Entity(globalId++, xPos, yPos, 'jindan', jTeam));
             }
 
             gameActive = true;
-            logPanel.innerHTML = "=== 天道因果重塑：1v1單挑完全修復，動態子彈時間調校完畢 ===";
+            logPanel.innerHTML = "=== 天道因果重塑：單挑死鎖已完全修復，戰鬥流暢開啟 ===";
         }
 
         function advancePhysicsStep(dt) {
@@ -560,7 +513,7 @@
             for (let i = particles.length - 1; i >= 0; i--) {
                 let pt = particles[i];
                 if (pt.isWave) {
-                    pt.r += pt.type === 'jindan' ? 7500 * dt : (pt.type === 'zhuji' ? 2000 * dt : 800 * dt);
+                    pt.r += pt.type === 'jindan' ? 6000 * dt : 1800 * dt;
                     if (pt.r >= pt.maxR) particles.splice(i, 1);
                 }
             }
@@ -568,7 +521,7 @@
             if (entities.length <= 1) {
                 gameActive = false;
                 if (entities.length === 1) addLog(totalSimulatedTime, `🏆 【終局】 最終存活大能：${DATA_CONFIG[entities[0].type].name}(ID:${entities[0].id}) 唯我獨尊！`);
-                else addLog(totalSimulatedTime, `💀 【大荒俱寂】 因果盡散！`);
+                else addLog(totalSimulatedTime, `💀 【大荒俱寂】 全場殞落！`);
             }
         }
 
@@ -584,22 +537,22 @@
                 let timeScaleSelect = document.getElementById('timeScale').value;
                 let timeScale = 1.0;
                 
-                // 🎬 【🎬 至高技術實裝：天道自動子彈時間引擎】
                 if (timeScaleSelect === 'auto') {
-                    // 只要場上有任何金丹正在「極限閃避中」，或者剛觸發「瞬移/萬法齊發」特效，就瞬間降維到 0.00001x
-                    let hasHighIntensityAction = entities.some(e => e.type === 'jindan' && e.isDodging) || 
-                                                 floatingTexts.some(t => t.text.includes("瞬移") || t.text.includes("萬法"));
-                    
-                    timeScale = hasHighIntensityAction ? 0.00001 : 0.25; // 平時 0.25x 順暢奔跑，對決瞬間 0.00001x 定格
+                    if (bulletTimeRealTimer > 0) {
+                        bulletTimeRealTimer -= frameDelta; // 用現實秒數扣減
+                        timeScale = 0.002;                // 觸發高能時極致慢速特寫
+                    } else {
+                        timeScale = 0.6;                  // 平時常規 0.6x 高流暢對打
+                    }
                 } else {
                     timeScale = parseFloat(timeScaleSelect) || 1.0;
                 }
 
-                // 根據流速動態分配物理步長，防止超低流速時卡死
-                let steps = timeScale < 0.00002 ? 1 : 12; 
+                // 動態分配步長，低流速時大幅縮減運算次數，杜絕網頁卡死
+                let steps = timeScale < 0.01 ? 1 : 8; 
                 let step_dt = (frameDelta * timeScale) / steps;
                 
-                if (frameDelta < 0.4) {
+                if (frameDelta < 0.3) {
                     for (let i = 0; i < steps; i++) {
                         if (!gameActive) break; 
                         advancePhysicsStep(step_dt);
@@ -615,9 +568,8 @@
                 if (ent.suppressors.length > 0) {
                     for (let s of ent.suppressors) {
                         ctx.beginPath(); ctx.moveTo(s.x, s.y); ctx.lineTo(ent.x, ent.y);
-                        ctx.strokeStyle = s.type === 'jindan' ? 'rgba(255, 255, 0, 0.35)' : (s.type === 'zhuji' ? 'rgba(200, 0, 255, 0.22)' : 'rgba(0, 255, 120, 0.16)');
-                        ctx.lineWidth = s.type === 'jindan' ? 3 : 1.5;
-                        ctx.setLineDash([4, 4]); ctx.stroke(); ctx.setLineDash([]);
+                        ctx.strokeStyle = s.type === 'jindan' ? 'rgba(255, 255, 0, 0.25)' : 'rgba(200, 0, 255, 0.15)';
+                        ctx.setLineDash([3, 3]); ctx.stroke(); ctx.setLineDash([]);
                     }
                 }
             }
@@ -633,13 +585,13 @@
                 if (pt.isWave) {
                     let alpha = Math.max(0, 1 - (pt.r / pt.maxR));
                     ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.r, 0, Math.PI * 2);
-                    ctx.strokeStyle = pt.type === 'jindan' ? `rgba(255, 255, 0, ${alpha * 0.6})` : (pt.type === 'zhuji' ? `rgba(255, 51, 204, ${alpha * 0.4})` : `rgba(77, 255, 77, ${alpha * 0.5})`);
-                    ctx.lineWidth = pt.type === 'jindan' ? 4 : 2; ctx.stroke();
+                    ctx.strokeStyle = pt.type === 'jindan' ? `rgba(255, 255, 0, ${alpha * 0.5})` : `rgba(255, 51, 204, ${alpha * 0.4})`;
+                    ctx.stroke();
                 }
             }
 
             for (let i = floatingTexts.length - 1; i >= 0; i--) {
-                let ft = floatingTexts[i]; ft.y -= 0.4; ft.life--;
+                let ft = floatingTexts[i]; ft.y -= 0.3; ft.life--;
                 if (ft.life <= 0) floatingTexts.splice(i, 1);
                 else {
                     ctx.fillStyle = ft.color; ctx.font = 'bold 11px monospace'; ctx.textAlign = 'center';
