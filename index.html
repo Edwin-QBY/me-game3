@@ -3,32 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>高維修仙數據演武場 - 流暢流速優化版</title>
+    <title>高維修仙模擬器 - 宗門大千世界版</title>
     <style>
         body {
             margin: 0; padding: 15px;
-            background-color: #040406; color: #fff;
+            background-color: #050508; color: #fff;
             font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
             display: flex; flex-direction: column; align-items: center;
         }
         h1 { margin: 0; color: #00ffcc; text-shadow: 0 0 10px rgba(0,255,204,0.4); font-size: 22px; }
         
         .timer-container {
-            display: flex; gap: 20px; margin: 6px 0;
-            background: #0b0b12; padding: 6px 15px; border-radius: 6px;
-            border: 1px solid #1f1f2e; font-family: monospace; font-size: 13px;
+            display: flex; gap: 20px; margin: 5px 0;
+            background: #0d0d18; padding: 5px 15px; border-radius: 6px;
+            border: 1px solid #1f1f38; font-family: monospace; font-size: 13px;
         }
         .t-sim { color: #00ffff; font-weight: bold; }
         .t-real { color: #ff9933; }
 
         #control-panel {
-            background-color: #0b0b12; padding: 12px; border-radius: 8px;
+            background-color: #0b0b14; padding: 12px; border-radius: 8px;
             box-shadow: 0 4px 25px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 8px;
-            width: 100%; max-width: 1200px; margin-bottom: 10px; border: 1px solid #1c1c2b;
+            width: 100%; max-width: 1200px; margin-bottom: 10px; border: 1px solid #1c1c33;
         }
         .faction-container { display: flex; gap: 10px; flex-wrap: wrap; }
         .faction-box {
-            flex: 1; min-width: 200px; padding: 8px; border-radius: 6px; background: #12121c;
+            flex: 1; min-width: 200px; padding: 8px; border-radius: 6px; background: #11111c;
             display: flex; flex-direction: column; gap: 6px; border-top: 4px solid #fff;
         }
         .f-mortal { border-top-color: #888888; }
@@ -39,34 +39,37 @@
         .faction-box .eval { font-size: 11px; color: #ffad33; }
         
         .row { display: flex; align-items: center; justify-content: space-between; font-size: 11px; }
-        input[type="number"] { width: 55px; padding: 2px; border-radius: 4px; border: none; background: #050508; color: #fff; text-align: center; }
-        select { padding: 3px; border-radius: 4px; background: #050508; color: #00ffcc; border: none; font-size: 11px; }
+        input[type="number"] { width: 55px; padding: 2px; border-radius: 4px; border: none; background: #05050a; color: #fff; text-align: center; }
+        select { padding: 3px; border-radius: 4px; background: #05050a; color: #00ffcc; border: 1px solid #22223c; font-size: 11px; }
         
         .global-settings {
             display: flex; justify-content: space-between; align-items: center;
-            background: #050508; padding: 8px; border-radius: 6px; border: 1px dashed #2a2a3d; width: 100%; box-sizing: border-box;
+            background: #05050a; padding: 8px; border-radius: 6px; border: 1px dashed #2a2a44; width: 100%; box-sizing: border-box; flex-wrap: wrap; gap: 10px;
         }
-        .setting-group { display: flex; align-items: center; gap: 12px; font-size: 12px; }
+        .setting-group { display: flex; align-items: center; gap: 10px; font-size: 12px; flex-wrap: wrap; }
         .cw-label { color: #ff3366; font-weight: bold; display: flex; align-items: center; gap: 5px; cursor: pointer; }
 
         #startBtn {
-            background: linear-gradient(135deg, #ffff00, #ff00cc); color: #000;
+            background: linear-gradient(135deg, #00ffcc, #ff00cc); color: #000;
             font-weight: bold; border: none; padding: 6px 20px; border-radius: 5px;
             cursor: pointer; font-size: 13px; transition: all 0.2s;
         }
-        #startBtn:hover { transform: scale(1.02); box-shadow: 0 0 15px rgba(255,255,0,0.5); }
+        #startBtn:hover { transform: scale(1.02); box-shadow: 0 0 15px rgba(0,255,204,0.6); }
         
-        canvas { background-color: #010102; border: 2px solid #12121a; border-radius: 6px; }
+        .canvas-wrapper {
+            width: 100%; max-width: 1200px; overflow: auto; background: #020204; border: 2px solid #1a1a2e; border-radius: 6px;
+        }
+        canvas { background-color: #020204; display: block; margin: 0 auto; }
         #log-panel {
             margin-top: 5px; background: #020205; padding: 6px; border-radius: 6px;
-            width: 100%; max-width: 1180px; height: 125px; overflow-y: auto;
-            font-family: monospace; font-size: 11px; color: #a4e3e6; border: 1px solid #0e0e18;
+            width: 100%; max-width: 1180px; height: 110px; overflow-y: auto;
+            font-family: monospace; font-size: 11px; color: #a4e3e6; border: 1px solid #101020;
         }
     </style>
 </head>
 <body>
 
-    <h1>高維修仙戰鬥模擬器 (流暢流速優化版)</h1>
+    <h1>諸天演武場 - 宗門大千世界版</h1>
     
     <div class="timer-container">
         <div class="t-real">🖥️ 現實觀測時間: <span id="realTimeDisplay">0.00</span> 秒</div>
@@ -81,55 +84,61 @@
                 <div class="row"><label>陣營：</label>
                     <select id="mortalTeam"><option value="A">天道盟 (A)</option><option value="B">魔道宗 (B)</option><option value="C" selected>散修 (C)</option></select>
                 </div>
-                <div class="row"><label>天威防禦：</label><span style="color:#ff3333;">觸碰即汽化</span></div>
             </div>
             <div class="faction-box f-lianqi">
-                <h3>煉氣期修士 <span class="eval">技能：多段飛劍</span></h3>
+                <h3>煉氣期修士 <span class="eval">技能：法術飛劍</span></h3>
                 <div class="row"><label>數量：</label><input type="number" id="lianqiCount" value="0"></div>
                 <div class="row"><label>陣營：</label>
                     <select id="lianqiTeam"><option value="A" selected>天道盟 (A)</option><option value="B">魔道宗 (B)</option><option value="C">獨立 (C)</option></select>
                 </div>
-                <div class="row"><label>技能庫：</label><span>🔥彈幕火球 / 🗡️疾速御劍</span></div>
             </div>
             <div class="faction-box f-zhuji">
-                <h3>築基期大修 <span class="eval">技能：天基神雷</span></h3>
+                <h3>築基期大修 <span class="eval">技能：真元巨弩</span></h3>
                 <div class="row"><label>數量：</label><input type="number" id="zhujiCount" value="0"></div>
                 <div class="row"><label>陣營：</label>
                     <select id="zhujiTeam"><option value="A">天道盟 (A)</option><option value="B" selected>魔道宗 (B)</option><option value="C">獨立 (C)</option></select>
                 </div>
-                <div class="row"><label>高維神通：</label><span>🏹真元巨弩 / ⚡天基神雷</span></div>
             </div>
             <div class="faction-box f-jindan">
-                <h3>金丹大能 <span class="eval" style="color:#ffff00;">單挑測試專用</span></h3>
-                <div class="row"><label>數量：</label><input type="number" id="jindanCount" value="2"></div>
+                <h3>金丹大能 <span class="eval" style="color:#ffff00;">至高法則</span></h3>
+                <div class="row"><label>數量：</label><input type="number" id="jindanCount" value="0"></div>
                 <div class="row"><label>陣營：</label>
                     <select id="jindanTeam"><option value="A">天道盟 (A)</option><option value="B">魔道宗 (B)</option><option value="C" selected>獨立散修 (C)</option></select>
                 </div>
-                <div class="row"><label>至高法則：</label><span style="color:#ffff00;">🌌瞬移 / 🪐萬法齊發 / 🧬降境重生</span></div>
             </div>
         </div>
 
         <div class="global-settings">
             <div class="setting-group">
-                <label>戰場寬(米)：</label><input type="number" id="mapWidth" value="1150" min="600" max="1600">
-                <label>高(米)：</label><input type="number" id="mapHeight" value="500" min="400" max="900">
-                <label>神識流速調校：</label>
-                <select id="timeScale">
-                    <option value="auto" selected>✨ 天道智能事件調速 (平時0.6x高流暢 / 觸發神技瞬間極限特寫0.002x)</option>
-                    <option value="0.05">0.05x 穩定慢速觀測</option>
-                    <option value="0.2">0.20x 慢速解析</option>
-                    <option value="1.0">1.00x 修仙界真實流速</option>
+                <label>🗺️ 界域地圖規格：</label>
+                <select id="mapPreset" onchange="applyMapPreset()">
+                    <option value="micro">微型洞天 (800 × 450)</option>
+                    <option value="medium" selected>中千世界 (1200 × 650)</option>
+                    <option value="large">宏大千世界 (1800 × 950)</option>
+                    <option value="infinite">無邊洪荒 (2600 × 1400)</option>
                 </select>
+                <label>手動寬：</label><input type="number" id="mapWidth" value="1200" min="400" max="3000">
+                <label>高：</label><input type="number" id="mapHeight" value="650" min="400" max="2000">
             </div>
             <div class="setting-group">
-                <label class="cw-label"><input type="checkbox" id="intraRankCombat" checked> 開啟同陣營/同境界生死內戰</label>
-                <button id="startBtn">神識凝聚·開戰！</button>
+                <label>⏳ 因果流速：</label>
+                <select id="timeScale">
+                    <option value="auto" selected>✨ 智能事件調速 (0.6x 平暢 / 0.002x 極限神技特寫)</option>
+                    <option value="0.05">0.05x 慢速慢鏡</option>
+                    <option value="0.5">0.50x 穩健拆招</option>
+                    <option value="1.0">1.00x 真實修仙流速</option>
+                </select>
+                <label class="cw-label"><input type="checkbox" id="intraRankCombat" checked> 生死內戰</label>
+                <button id="startBtn">凝聚神識·開戰！</button>
             </div>
         </div>
     </div>
 
-    <canvas id="arena" width="1150" height="500"></canvas>
-    <div id="log-panel">=== 演武天幕：死鎖問題已完全優化，時空引擎重構完畢 ===</div>
+    <div class="canvas-wrapper">
+        <canvas id="arena" width="1200" height="650"></canvas>
+    </div>
+    
+    <div id="log-panel">=== 演武天幕：初始角色已全部歸零。請在上方調整地圖尺寸、配置修士，點擊開戰！ ===</div>
 
     <script>
         const canvas = document.getElementById('arena');
@@ -139,13 +148,10 @@
         const simTimeDisplay = document.getElementById('simTimeDisplay');
         const realTimeDisplay = document.getElementById('realTimeDisplay');
 
-        let entities = []; let projectiles = []; let particles = []; let floatingTexts = [];
+        let entities = []; let projectiles = []; let particles = []; let floatingTexts = []; let buildings = [];
         let gameActive = false;
-        
         let totalSimulatedTime = 0; let totalRealTime = 0;
         let lastFrameTime = performance.now();
-        
-        // 🛠️ 優化核心：現實時間計時器（與遊戲內部流速完全獨立，防死鎖）
         let bulletTimeRealTimer = 0; 
 
         const DATA_CONFIG = {
@@ -155,43 +161,51 @@
                 attackCd: 0.6, range: 15, dmg: 0.001, spellSpeed: 20,
                 senseRange: 0, lingyaPower: 0
             },
-            text: '...',
             lianqi: {
                 name: '煉氣修士', color: '#4dff4d', radius: 9, rank: 1,
-                bodyArmor: 20, speed: 180, maxShieldTnt: 300, maxShieldHits: 30,
-                attackCd: 0.15, range: 350, dmg: 45, spellSpeed: 1400, 
-                blastRadius: 50, fuseRadius: 15, dodgeDist: 120,
+                bodyArmor: 22, speed: 170, maxShieldTnt: 350, maxShieldHits: 25,
+                attackCd: 0.25, range: 380, dmg: 50, spellSpeed: 1100, 
+                blastRadius: 55, fuseRadius: 15, dodgeDist: 150, escapeSpeed: 400,
                 senseRange: 150, lingyaPower: 120 
             },
             zhuji: {
                 name: '築基大修', color: '#ff33cc', radius: 13, rank: 2,
-                bodyArmor: 600, speed: 900, escapeSpeed: 1800, maxShieldTnt: 3000, maxShieldHits: 80,
-                attackCd: 0.12, range: 750, dmg: 750, spellSpeed: 4500, 
-                blastRadius: 130, fuseRadius: 35, dodgeDist: 280,
-                senseRange: 500, lingyaPower: 6000 
+                bodyArmor: 650, speed: 700, escapeSpeed: 2400, maxShieldTnt: 3500, maxShieldHits: 70,
+                attackCd: 0.18, range: 780, dmg: 800, spellSpeed: 3800, 
+                blastRadius: 140, fuseRadius: 35, dodgeDist: 300,
+                senseRange: 500, lingyaPower: 6500 
             },
             jindan: {
                 name: '金丹大能', color: '#ffff00', radius: 17, rank: 3,
-                bodyArmor: 5000, speed: 2800, escapeSpeed: 5500, maxShieldTnt: 1000000, maxShieldHits: 240, 
-                attackCd: 0.25, range: 1600, dmg: 2550000, spellSpeed: 9500, 
-                blastRadius: 320, fuseRadius: 55, dodgeDist: 450,
-                senseRange: 1600, lingyaPower: 1500000 
+                bodyArmor: 6000, speed: 2000, escapeSpeed: 7500, maxShieldTnt: 1200000, maxShieldHits: 200, 
+                attackCd: 0.35, range: 1600, dmg: 2800000, spellSpeed: 8500, 
+                blastRadius: 350, fuseRadius: 55, dodgeDist: 500,
+                senseRange: 1600, lingyaPower: 1800000 
             }
         };
 
         const TEAM_COLORS = { A: '#00ccff', B: '#ff3333', C: '#ffff33' };
+        const BUILDING_NAMES = ["⛩️ 聚靈天塔", "🔮 護宗石碑", "殿 煉丹神閣", "壇 遠古祭壇"];
+
+        function applyMapPreset() {
+            const preset = document.getElementById('mapPreset').value;
+            const wInput = document.getElementById('mapWidth');
+            const hInput = document.getElementById('mapHeight');
+            
+            if (preset === 'micro') { wInput.value = 800; hInput.value = 450; }
+            else if (preset === 'medium') { wInput.value = 1200; hInput.value = 650; }
+            else if (preset === 'large') { wInput.value = 1800; hInput.value = 950; }
+            else if (preset === 'infinite') { wInput.value = 2600; hInput.value = 1400; }
+        }
 
         function addLog(simTime, text) {
             logPanel.innerHTML += `<div>[${simTime.toFixed(6)}s] ${text}</div>`;
             logPanel.scrollTop = logPanel.scrollHeight;
         }
 
-        // 觸發動態子彈時間（傳入現實秒數，到點強制解除，杜絕卡死）
         function triggerBulletTime(realDuration) {
             if (document.getElementById('timeScale').value === 'auto') {
-                if (realDuration > bulletTimeRealTimer) {
-                    bulletTimeRealTimer = realDuration;
-                }
+                if (realDuration > bulletTimeRealTimer) bulletTimeRealTimer = realDuration;
             }
         }
 
@@ -204,6 +218,24 @@
             return false;
         }
 
+        // 隨機生成宗門建物
+        function spawnBuildings(w, h) {
+            buildings = [];
+            let numBuildings = Math.floor((w * h) / 160000); 
+            if (numBuildings < 2) numBuildings = 2;
+            if (numBuildings > 12) numBuildings = 12;
+
+            for (let i = 0; i < numBuildings; i++) {
+                buildings.push({
+                    x: Math.random() * (w - 300) + 150,
+                    y: Math.random() * (h - 200) + 100,
+                    w: Math.random() * 90 + 60,
+                    h: Math.random() * 90 + 60,
+                    name: BUILDING_NAMES[Math.floor(Math.random() * BUILDING_NAMES.length)]
+                });
+            }
+        }
+
         class Entity {
             constructor(id, x, y, type, team) {
                 this.id = id; this.x = x; this.y = y; this.type = type; this.team = team;
@@ -211,14 +243,10 @@
                 this.bodyAlive = true;
                 this.attackCdTimer = Math.random() * 0.1;
                 this.orbitDirection = Math.random() > 0.5 ? 1 : -1;
-                this.hasReborn = false;
-                this.isDodging = false; this.wasDodgingBefore = false;
-                
-                this.teleportCharges = 3;
-                this.teleportCdTimer = 0;
-                this.burnSoulTimer = 0; 
-                
+                this.teleportCharges = 4;
+                this.isDodging = false;
                 this.lingyaDebuff = 0; this.isDeterred = false; this.suppressors = [];
+                this.trail = []; // 用於儲存大動作閃避的空間殘影
             }
 
             loadRankStats(type) {
@@ -231,32 +259,40 @@
 
             update(dt) {
                 if (this.attackCdTimer > 0) this.attackCdTimer -= dt;
-                if (this.burnSoulTimer > 0) this.burnSoulTimer -= dt;
 
+                // 金丹自然緩慢回血
                 if (this.type === 'jindan' && this.hpPercent < 1.0) {
-                    this.hpPercent = Math.min(1.0, this.hpPercent + (dt / 8.0));
+                    this.hpPercent = Math.min(1.0, this.hpPercent + (dt / 6.0));
                 }
 
-                // 1. 肉搏斥力優化
+                // 紀錄大動作閃避殘影
+                if (this.isDodging && Math.random() < 0.4) {
+                    this.trail.push({ x: this.x, y: this.y, alpha: 0.6 });
+                }
+                for (let i = this.trail.length - 1; i >= 0; i--) {
+                    this.trail[i].alpha -= dt * 2.5;
+                    if (this.trail[i].alpha <= 0) this.trail.splice(i, 1);
+                }
+
+                // 人員、修士間斥力
                 for (let ent of entities) {
                     if (ent.id === this.id) continue;
                     let d = Math.hypot(ent.x - this.x, ent.y - this.y);
-                    let minDist = this.radius + ent.radius + 40;
+                    let minDist = this.radius + ent.radius + 25;
                     if (d < minDist) {
-                        let push = (minDist - d) * 0.5;
+                        let push = (minDist - d) * 0.4;
                         let ang = Math.atan2(this.y - ent.y, this.x - ent.x);
                         this.x += Math.cos(ang) * push; this.y += Math.sin(ang) * push;
                     }
                 }
 
                 let finalSpeed = this.speed;
-                if (this.burnSoulTimer > 0) finalSpeed *= 3.0; 
-                if (this.isDodging && (this.type === 'zhuji' || this.type === 'jindan')) {
-                    finalSpeed = DATA_CONFIG[this.type].escapeSpeed;
+                if (this.isDodging) {
+                    finalSpeed = DATA_CONFIG[this.type].escapeSpeed || this.speed * 2.5;
                 }
-                if (this.isDeterred) finalSpeed *= 0.2;
+                if (this.isDeterred) finalSpeed *= 0.25;
 
-                // 2. 飛彈探測
+                // 飛彈檢測機制
                 let targetProj = null; let minDistProj = Infinity;
                 let conf = DATA_CONFIG[this.type];
 
@@ -265,26 +301,28 @@
                         let mockAttacker = { id: p.attackerId, team: p.attackerTeam, type: p.attackerType };
                         if (!checkIsEnemy(this, mockAttacker)) continue;
                         
-                        let dp = Math.hypot(p.x - this.x, p.y - p.y);
+                        let dp = Math.hypot(p.x - this.x, p.y - this.y);
                         if (dp < conf.dodgeDist && dp < minDistProj) {
                             targetProj = p; minDistProj = dp;
                         }
                     }
                 }
 
-                // 3. 移動與空間瞬移觸發
+                // 執行動作（大動作閃避 / 瞬移 / 常規尋敵）
                 if (targetProj) {
-                    if (this.type === 'jindan' && this.teleportCharges > 0 && Math.random() < 0.15) {
-                        this.x = Math.random() * (canvas.width - 100) + 50;
-                        this.y = Math.random() * (canvas.height - 100) + 50;
+                    if (this.type === 'jindan' && this.teleportCharges > 0 && Math.random() < 0.12) {
+                        this.x = Math.random() * (canvas.width - 200) + 100;
+                        this.y = Math.random() * (canvas.height - 200) + 100;
                         this.teleportCharges--;
-                        floatingTexts.push({ x: this.x, y: this.y - 30, text: "🌌 空間法則·瞬移！", color: '#ffff00', life: 35 });
-                        addLog(totalSimulatedTime, `🌌 [瞬移] 金丹大能(ID:${this.id}) 橫渡虛空躲避打擊！`);
-                        triggerBulletTime(0.4); // 瞬移震撼特寫：現實時間慢動作0.4秒
+                        floatingTexts.push({ x: this.x, y: this.y - 30, text: "🌌 空間挪移！", color: '#ffff00', life: 30 });
+                        addLog(totalSimulatedTime, `🌌 [瞬移] 金丹大能(ID:${this.id}) 撕裂虛空橫渡戰場！`);
+                        triggerBulletTime(0.4);
                     } else {
+                        // 【大幅度閃避動作】
                         this.isDodging = true;
-                        let angP = Math.atan2(this.y - targetProj.y, this.x - targetProj.x) + Math.PI/2 * this.orbitDirection;
-                        this.x += Math.cos(angP) * finalSpeed * dt; this.y += Math.sin(angP) * finalSpeed * dt;
+                        let angP = Math.atan2(this.y - targetProj.y, this.x - targetProj.x) + (Math.PI / 2) * this.orbitDirection;
+                        this.x += Math.cos(angP) * finalSpeed * dt; 
+                        this.y += Math.sin(angP) * finalSpeed * dt;
                     }
                 } else {
                     this.isDodging = false;
@@ -292,20 +330,33 @@
                     if (enemy) {
                         let ang = Math.atan2(enemy.y - this.y, enemy.x - this.x);
                         let dist = Math.hypot(enemy.x - this.x, enemy.y - this.y);
-                        let idealDist = conf.range * 0.35;
+                        let idealDist = conf.range * 0.4;
                         
                         let moveAngle = ang;
-                        if (dist < idealDist) moveAngle = ang + Math.PI/2 * this.orbitDirection;
+                        if (dist < idealDist) moveAngle = ang + (Math.PI / 2) * this.orbitDirection;
                         
                         this.x += Math.cos(moveAngle) * finalSpeed * dt;
                         this.y += Math.sin(moveAngle) * finalSpeed * dt;
                     }
                 }
 
+                // 建物碰撞阻擋（修士撞牆處理）
+                for (let b of buildings) {
+                    let closestX = Math.max(b.x, Math.min(this.x, b.x + b.w));
+                    let closestY = Math.max(b.y, Math.min(this.y, b.y + b.h));
+                    let dX = this.x - closestX; let dY = this.y - closestY;
+                    let distSq = dX * dX + dY * dY;
+                    if (distSq < this.radius * this.radius) {
+                        let dist = Math.sqrt(distSq) || 1;
+                        let overlap = this.radius - dist;
+                        this.x += (dX / dist) * overlap; this.y += (dY / dist) * overlap;
+                    }
+                }
+
                 this.x = Math.max(this.radius, Math.min(canvas.width - this.radius, this.x));
                 this.y = Math.max(this.radius, Math.min(canvas.height - this.radius, this.y));
 
-                // 4. 施展法術
+                // 施展遠程法術
                 let enemy = this.findNearestEnemy();
                 if (enemy && this.attackCdTimer <= 0) {
                     let dist = Math.hypot(enemy.x - this.x, enemy.y - this.y);
@@ -347,11 +398,11 @@
                     });
                 }
                 else if (this.type === 'jindan') {
-                    let count = Math.floor(Math.random() * 12) + 6;
-                    addLog(totalSimulatedTime, `🪐 [萬法齊發] 金丹大能(ID:${this.id}) 祭出 ${count} 道萬寶流光！`);
-                    triggerBulletTime(0.3); // 神技祭出，特寫 0.3 秒
+                    let count = Math.floor(Math.random() * 10) + 6;
+                    addLog(totalSimulatedTime, `🪐 [萬法齊發] 金丹大能(ID:${this.id}) 狂轟出 ${count} 重天道神通！`);
+                    triggerBulletTime(0.3);
                     for (let i = 0; i < count; i++) {
-                        let spread = (Math.random() - 0.5) * 0.4; 
+                        let spread = (Math.random() - 0.5) * 0.35; 
                         projectiles.push({
                             x: this.x, y: this.y, vx: Math.cos(ang + spread) * conf.spellSpeed, vy: Math.sin(ang + spread) * conf.spellSpeed,
                             damage: conf.dmg, color: '#ffff00', radius: 6, attackerId: this.id, attackerType: this.type, attackerTeam: this.team,
@@ -374,8 +425,8 @@
                         return; 
                     } else {
                         actualTntDmg -= conf.maxShieldTnt; this.shieldHits = 0;
-                        floatingTexts.push({ x: this.x, y: this.y - 15, text: `💥 護盾爆碎！`, color: '#ff00ff', life: 20 });
-                        triggerBulletTime(0.4); // 破盾大事件：特寫 0.4 秒
+                        floatingTexts.push({ x: this.x, y: this.y - 15, text: `💥 護體靈盾碎裂！`, color: '#ff00ff', life: 25 });
+                        triggerBulletTime(0.35);
                     }
                 }
 
@@ -387,21 +438,25 @@
 
                 if (this.hpPercent <= 0) {
                     if (this.type === 'jindan') {
-                        addLog(totalSimulatedTime, `🧬 【神魂重塑】 金丹大能(ID:${this.id}) 金丹碎滅！跌落至【築基期】！`);
+                        addLog(totalSimulatedTime, `🧬 【神魂俱震】 金丹大能(ID:${this.id}) 金丹碎裂！強行降階至【築基期】重生！`);
                         this.loadRankStats('zhuji'); 
                         this.hpPercent = 1.0;          
-                        this.burnSoulTimer = 3.0;      
-                        this.hasReborn = true; 
-                        floatingTexts.push({ x: this.x, y: this.y - 35, text: `🧬 降境重生·燃魂！`, color: '#ff33cc', life: 40 });
-                        triggerBulletTime(0.6); // 降境重生大特寫 0.6 秒
+                        floatingTexts.push({ x: this.x, y: this.y - 35, text: `🧬 碎丹降境重生！`, color: '#ff33cc', life: 40 });
+                        triggerBulletTime(0.6);
                     } else {
                         this.bodyAlive = false;
-                        addLog(totalSimulatedTime, `💀 【殞落】 ${conf.name}(ID:${this.id}) 化為劫灰！`);
+                        addLog(totalSimulatedTime, `💀 【殞落】 ${conf.name}(ID:${this.id}) 身消道殞，化為劫灰。`);
                     }
                 }
             }
 
             draw() {
+                // 畫大動作閃避空間殘影
+                for (let t of this.trail) {
+                    ctx.beginPath(); ctx.arc(t.x, t.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(0, 255, 204, ${t.alpha * 0.3})`; ctx.fill();
+                }
+
                 ctx.beginPath(); ctx.arc(this.x, this.y, this.radius + 4, 0, Math.PI * 2);
                 ctx.strokeStyle = TEAM_COLORS[this.team] || '#ffffff';
                 ctx.lineWidth = 2; ctx.stroke();
@@ -410,17 +465,18 @@
                 ctx.fillStyle = DATA_CONFIG[this.type].color; ctx.fill();
 
                 if (this.shieldHits > 0 && DATA_CONFIG[this.type].maxShieldTnt > 0) {
-                    ctx.beginPath(); ctx.arc(this.x, this.y, this.radius + 9, 0, Math.PI * 2);
-                    ctx.strokeStyle = this.type === 'jindan' ? 'rgba(255, 255, 0, 0.5)' : 'rgba(255, 0, 255, 0.4)';
+                    ctx.beginPath(); ctx.arc(this.x, this.y, this.radius + 8, 0, Math.PI * 2);
+                    ctx.strokeStyle = this.type === 'jindan' ? 'rgba(255, 255, 0, 0.6)' : 'rgba(255, 0, 255, 0.5)';
                     ctx.stroke();
                 }
 
-                let barW = this.radius * 2.5; let startY = this.y - this.radius - 10;
+                let barW = this.radius * 2.5; let startY = this.y - this.radius - 9;
                 ctx.fillStyle = '#222'; ctx.fillRect(this.x - barW/2, startY, barW, 4);
                 ctx.fillStyle = '#00ff00'; ctx.fillRect(this.x - barW/2, startY, barW * Math.max(0, this.hpPercent), 2);
             }
         }
 
+        // 法術巨量爆炸範圍效果
         function triggerExplosion(x, y, blastRadius, maxDamage, attacker) {
             particles.push({ x: x, y: y, r: 2, maxR: blastRadius, type: attacker.attackerType, isWave: true });
             for (let ent of entities) {
@@ -444,7 +500,7 @@
                     let dist = Math.hypot(target.x - boss.x, target.y - boss.y);
                     if (dist <= bConf.senseRange && boss.rank > target.rank) {
                         target.isDeterred = true;
-                        let lingyaDmg = (bConf.lingyaPower / 200) * dt;
+                        let lingyaDmg = (bConf.lingyaPower / 250) * dt;
                         target.takeDamage(lingyaDmg, 0, 1, { attackerId: boss.id, attackerType: boss.type, attackerTeam: boss.team }, true);
                         target.suppressors.push({ x: boss.x, y: boss.y, type: boss.type });
                     }
@@ -457,8 +513,13 @@
             totalSimulatedTime = 0; totalRealTime = 0; bulletTimeRealTimer = 0;
             lastFrameTime = performance.now();
 
-            canvas.width = parseInt(document.getElementById('mapWidth').value) || 1150;
-            canvas.height = parseInt(document.getElementById('mapHeight').value) || 500;
+            // 讀取手動調節的畫布寬高大小
+            let finalW = parseInt(document.getElementById('mapWidth').value) || 1200;
+            let finalH = parseInt(document.getElementById('mapHeight').value) || 650;
+            canvas.width = finalW; canvas.height = finalH;
+
+            // 生成宗門建築物
+            spawnBuildings(finalW, finalH);
 
             let mCount = parseInt(document.getElementById('mortalCount').value) || 0; let mTeam = document.getElementById('mortalTeam').value;
             let lCount = parseInt(document.getElementById('lianqiCount').value) || 0; let lTeam = document.getElementById('lianqiTeam').value;
@@ -466,19 +527,26 @@
             let jCount = parseInt(document.getElementById('jindanCount').value) || 0; let jTeam = document.getElementById('jindanTeam').value;
 
             let globalId = 0;
-            for (let i = 0; i < mCount; i++) entities.push(new Entity(globalId++, Math.random() * 100 + 50, Math.random() * (canvas.height - 100) + 50, 'mortal', mTeam));
-            for (let i = 0; i < lCount; i++) entities.push(new Entity(globalId++, Math.random() * 200 + 100, Math.random() * (canvas.height - 100) + 50, 'lianqi', lTeam));
-            for (let i = 0; i < zCount; i++) entities.push(new Entity(globalId++, i % 2 === 0 ? 200 : canvas.width - 200, canvas.height/2, 'zhuji', zTeam));
-            
-            // 1v1 單挑對立生成
-            for (let i = 0; i < jCount; i++) {
-                let xPos = jCount === 2 ? (i === 0 ? 200 : canvas.width - 200) : canvas.width/2 + (Math.random()-0.5)*200;
-                let yPos = canvas.height/2;
-                entities.push(new Entity(globalId++, xPos, yPos, 'jindan', jTeam));
+            // 隨機在空地分配修士，並確保不直接卡在建築物中心
+            function getSafePos() {
+                while(true) {
+                    let rx = Math.random() * (finalW - 80) + 40;
+                    let ry = Math.random() * (finalH - 80) + 40;
+                    let hit = false;
+                    for(let b of buildings) {
+                        if(rx >= b.x-10 && rx <= b.x+b.w+10 && ry >= b.y-10 && ry <= b.y+b.h+10) hit = true;
+                    }
+                    if(!hit) return {x: rx, y: ry};
+                }
             }
 
+            for (let i = 0; i < mCount; i++) { let p = getSafePos(); entities.push(new Entity(globalId++, p.x, p.y, 'mortal', mTeam)); }
+            for (let i = 0; i < lCount; i++) { let p = getSafePos(); entities.push(new Entity(globalId++, p.x, p.y, 'lianqi', lTeam)); }
+            for (let i = 0; i < zCount; i++) { let p = getSafePos(); entities.push(new Entity(globalId++, p.x, p.y, 'zhuji', zTeam)); }
+            for (let i = 0; i < jCount; i++) { let p = getSafePos(); entities.push(new Entity(globalId++, p.x, p.y, 'jindan', jTeam)); }
+
             gameActive = true;
-            logPanel.innerHTML = "=== 天道因果重塑：單挑死鎖已完全修復，戰鬥流暢開啟 ===";
+            logPanel.innerHTML = `=== 演武大陣啟動：界域大小 ${finalW}×${finalH}，宗門建築群已築起，道法推演開始！ ===`;
         }
 
         function advancePhysicsStep(dt) {
@@ -487,16 +555,28 @@
 
             for (let ent of entities) ent.update(dt);
 
+            // 法術子彈更新與碰撞檢測
             for (let i = projectiles.length - 1; i >= 0; i--) {
                 let p = projectiles[i];
                 p.x += p.vx * dt; p.y += p.vy * dt;
                 let explodeTriggered = false;
 
-                for (let ent of entities) {
-                    let mockAttacker = { id: p.attackerId, team: p.attackerTeam, type: p.attackerType };
-                    if (checkIsEnemy(ent, mockAttacker)) {
-                        let d = Math.hypot(ent.x - p.x, ent.y - p.y);
-                        if (d <= p.fuseRadius + ent.radius) { explodeTriggered = true; break; }
+                // 建築物阻擋法術（撞牆當場引爆法術）
+                for (let b of buildings) {
+                    if (p.x >= b.x && p.x <= b.x + b.w && p.y >= b.y && p.y <= b.y + b.h) {
+                        explodeTriggered = true;
+                        break;
+                    }
+                }
+
+                // 敵方修士碰撞引爆
+                if (!explodeTriggered) {
+                    for (let ent of entities) {
+                        let mockAttacker = { id: p.attackerId, team: p.attackerTeam, type: p.attackerType };
+                        if (checkIsEnemy(ent, mockAttacker)) {
+                            let d = Math.hypot(ent.x - p.x, ent.y - p.y);
+                            if (d <= p.fuseRadius + ent.radius) { explodeTriggered = true; break; }
+                        }
                     }
                 }
 
@@ -513,15 +593,15 @@
             for (let i = particles.length - 1; i >= 0; i--) {
                 let pt = particles[i];
                 if (pt.isWave) {
-                    pt.r += pt.type === 'jindan' ? 6000 * dt : 1800 * dt;
+                    pt.r += pt.type === 'jindan' ? 5500 * dt : 1600 * dt;
                     if (pt.r >= pt.maxR) particles.splice(i, 1);
                 }
             }
 
-            if (entities.length <= 1) {
+            if (entities.length <= 1 && (parseInt(document.getElementById('mortalCount').value) + parseInt(document.getElementById('lianqiCount').value) + parseInt(document.getElementById('zhujiCount').value) + parseInt(document.getElementById('jindanCount').value)) > 0) {
                 gameActive = false;
-                if (entities.length === 1) addLog(totalSimulatedTime, `🏆 【終局】 最終存活大能：${DATA_CONFIG[entities[0].type].name}(ID:${entities[0].id}) 唯我獨尊！`);
-                else addLog(totalSimulatedTime, `💀 【大荒俱寂】 全場殞落！`);
+                if (entities.length === 1) addLog(totalSimulatedTime, `🏆 【大局已定】 最終勝者：${DATA_CONFIG[entities[0].type].name}(ID:${entities[0].id}) 鎮壓全場，登臨仙道巔峰！`);
+                else addLog(totalSimulatedTime, `💀 【諸神寂滅】 所有修士與凡人皆同歸於盡，界域歸於大荒。`);
             }
         }
 
@@ -539,17 +619,16 @@
                 
                 if (timeScaleSelect === 'auto') {
                     if (bulletTimeRealTimer > 0) {
-                        bulletTimeRealTimer -= frameDelta; // 用現實秒數扣減
-                        timeScale = 0.002;                // 觸發高能時極致慢速特寫
+                        bulletTimeRealTimer -= frameDelta;
+                        timeScale = 0.002; 
                     } else {
-                        timeScale = 0.6;                  // 平時常規 0.6x 高流暢對打
+                        timeScale = 0.6;   
                     }
                 } else {
                     timeScale = parseFloat(timeScaleSelect) || 1.0;
                 }
 
-                // 動態分配步長，低流速時大幅縮減運算次數，杜絕網頁卡死
-                let steps = timeScale < 0.01 ? 1 : 8; 
+                let steps = timeScale < 0.01 ? 1 : 6; 
                 let step_dt = (frameDelta * timeScale) / steps;
                 
                 if (frameDelta < 0.3) {
@@ -563,18 +642,38 @@
                 realTimeDisplay.innerText = totalRealTime.toFixed(2);
             }
 
-            // 繪製威壓聯結線
+            // 1. 繪製宗門建築物
+            for (let b of buildings) {
+                ctx.fillStyle = "#161626";
+                ctx.fillRect(b.x, b.y, b.w, b.h);
+                ctx.strokeStyle = "#3b3b61";
+                ctx.lineWidth = 2;
+                ctx.strokeRect(b.x, b.y, b.w, b.h);
+                
+                // 畫大陣符文裝飾線
+                ctx.strokeStyle = "rgba(0, 255, 204, 0.15)";
+                ctx.strokeRect(b.x + 4, b.y + 4, b.w - 8, b.h - 8);
+
+                ctx.fillStyle = "#656599";
+                ctx.font = "11px sans-serif";
+                ctx.textAlign = "center";
+                ctx.fillText(b.name, b.x + b.w / 2, b.y + b.h / 2 + 4);
+            }
+
+            // 2. 繪製威壓聯結虛線
             for (let ent of entities) {
                 if (ent.suppressors.length > 0) {
                     for (let s of ent.suppressors) {
                         ctx.beginPath(); ctx.moveTo(s.x, s.y); ctx.lineTo(ent.x, ent.y);
-                        ctx.strokeStyle = s.type === 'jindan' ? 'rgba(255, 255, 0, 0.25)' : 'rgba(200, 0, 255, 0.15)';
-                        ctx.setLineDash([3, 3]); ctx.stroke(); ctx.setLineDash([]);
+                        ctx.strokeStyle = s.type === 'jindan' ? 'rgba(255, 255, 0, 0.2)' : 'rgba(200, 0, 255, 0.12)';
+                        ctx.setLineDash([4, 4]); ctx.stroke(); ctx.setLineDash([]);
                     }
                 }
             }
 
+            // 3. 繪製角色、法術與光波
             for (let ent of entities) ent.draw();
+            
             for (let p of projectiles) {
                 ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
                 ctx.fillStyle = p.color; ctx.fill();
@@ -585,13 +684,14 @@
                 if (pt.isWave) {
                     let alpha = Math.max(0, 1 - (pt.r / pt.maxR));
                     ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.r, 0, Math.PI * 2);
-                    ctx.strokeStyle = pt.type === 'jindan' ? `rgba(255, 255, 0, ${alpha * 0.5})` : `rgba(255, 51, 204, ${alpha * 0.4})`;
-                    ctx.stroke();
+                    ctx.strokeStyle = pt.type === 'jindan' ? `rgba(255, 255, 0, ${alpha * 0.6})` : `rgba(255, 51, 204, ${alpha * 0.4})`;
+                    ctx.lineWidth = 3; ctx.stroke();
                 }
             }
 
+            // 4. 浮空大字文字
             for (let i = floatingTexts.length - 1; i >= 0; i--) {
-                let ft = floatingTexts[i]; ft.y -= 0.3; ft.life--;
+                let ft = floatingTexts[i]; ft.y -= 0.4; ft.life--;
                 if (ft.life <= 0) floatingTexts.splice(i, 1);
                 else {
                     ctx.fillStyle = ft.color; ctx.font = 'bold 11px monospace'; ctx.textAlign = 'center';
