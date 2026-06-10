@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>高維修仙數據演武場 - 時空解封與燃魂免疫版</title>
+    <title>高維修仙數據演武場 - 終極單挑修復版</title>
     <style>
         body {
             margin: 0; padding: 15px;
@@ -66,18 +66,18 @@
 </head>
 <body>
 
-    <h1>高維修仙戰鬥模擬器 (時空自動解封與燃魂免疫版)</h1>
+    <h1>高維修仙戰鬥模擬器 (因果解耦與動態子彈時間版)</h1>
     
     <div class="timer-container">
         <div class="t-real">🖥️ 現實觀測時間: <span id="realTimeDisplay">0.00</span> 秒</div>
-        <div class="t-sim">⏱️ 修仙界真實逝去時間: <span id="simTimeDisplay">0.00000000</span> 秒</div>
+        <div class="t-sim">⏱️ 修仙界因果時間: <span id="simTimeDisplay">0.00000000</span> 秒</div>
     </div>
 
     <div id="control-panel">
         <div class="faction-container">
             <div class="faction-box f-mortal">
                 <h3>凡人 <span class="eval">狀態：天威螻蟻</span></h3>
-                <div class="row"><label>數量：</label><input type="number" id="mortalCount" value="5"></div>
+                <div class="row"><label>數量：</label><input type="number" id="mortalCount" value="0"></div>
                 <div class="row"><label>陣營：</label>
                     <select id="mortalTeam"><option value="A">天道盟 (A)</option><option value="B">魔道宗 (B)</option><option value="C" selected>散修 (C)</option></select>
                 </div>
@@ -85,7 +85,7 @@
             </div>
             <div class="faction-box f-lianqi">
                 <h3>煉氣期修士 <span class="eval">技能：多段飛劍</span></h3>
-                <div class="row"><label>數量：</label><input type="number" id="lianqiCount" value="3"></div>
+                <div class="row"><label>數量：</label><input type="number" id="lianqiCount" value="0"></div>
                 <div class="row"><label>陣營：</label>
                     <select id="lianqiTeam"><option value="A" selected>天道盟 (A)</option><option value="B">魔道宗 (B)</option><option value="C">獨立 (C)</option></select>
                 </div>
@@ -93,17 +93,17 @@
             </div>
             <div class="faction-box f-zhuji">
                 <h3>築基期大修 <span class="eval">技能：天基神雷</span></h3>
-                <div class="row"><label>數量：</label><input type="number" id="zhujiCount" value="2"></div>
+                <div class="row"><label>數量：</label><input type="number" id="zhujiCount" value="0"></div>
                 <div class="row"><label>陣營：</label>
                     <select id="zhujiTeam"><option value="A">天道盟 (A)</option><option value="B" selected>魔道宗 (B)</option><option value="C">獨立 (C)</option></select>
                 </div>
                 <div class="row"><label>高維神通：</label><span>🏹真元巨弩 / ⚡天基神雷</span></div>
             </div>
             <div class="faction-box f-jindan">
-                <h3>金丹大能 <span class="eval" style="color:#ffff00;">評價：核爆防禦·光速反應</span></h3>
-                <div class="row"><label>數量：</label><input type="number" id="jindanCount" value="1"></div>
+                <h3>金丹大能 <span class="eval" style="color:#ffff00;">單挑測試建議：數量設為 2 </span></h3>
+                <div class="row"><label>數量：</label><input type="number" id="jindanCount" value="2"></div>
                 <div class="row"><label>陣營：</label>
-                    <select id="jindanTeam"><option value="A">天道盟 (A)</option><option value="B">魔道宗 (B)</option><option value="C" selected>獨立 (C)</option></select>
+                    <select id="jindanTeam"><option value="A">天道盟 (A)</option><option value="B">魔道宗 (B)</option><option value="C" selected>獨立散修 (C)</option></select>
                 </div>
                 <div class="row"><label>至高法則：</label><span style="color:#ffff00;">🌌瞬移 / 🪐萬法齊發 / 🧬降境重生</span></div>
             </div>
@@ -115,22 +115,21 @@
                 <label>高(米)：</label><input type="number" id="mapHeight" value="500" min="400" max="900">
                 <label>神識流速調校：</label>
                 <select id="timeScale">
-                    <option value="0.00001">0.00001x 剎那芳華·捕捉100納秒光速反應</option>
-                    <option value="0.001">0.001x 極境微觀·定格萬法高爆彈幕</option>
-                    <option value="0.1" selected>0.10x 慢速解析神識身法</option>
+                    <option value="auto" selected>✨ 天道智慧調速 (非戰時0.2x慢速 / 大能對決瞬間自動切換0.00001x)</option>
+                    <option value="0.00001">0.00001x 絕對微觀定格（單挑不建議恆定此檔）</option>
+                    <option value="0.1">0.10x 穩定慢速解析</option>
                     <option value="1.0">1.00x 修仙界真實流速</option>
-                    <option value="10.0">10.00x 縮地成寸·高頻搏殺</option>
                 </select>
             </div>
             <div class="setting-group">
-                <label class="cw-label"><input type="checkbox" id="intraRankCombat" checked> 開啟同境界生死內戰</label>
+                <label class="cw-label"><input type="checkbox" id="intraRankCombat" checked> 開啟同陣營/同境界生死內戰</label>
                 <button id="startBtn">神識凝聚·開戰！</button>
             </div>
         </div>
     </div>
 
     <canvas id="arena" width="1150" height="500"></canvas>
-    <div id="log-panel">=== 演武天幕重組：極微觀相對論免疫、時空自動解封機制已全面實裝 ===</div>
+    <div id="log-panel">=== 演武天幕重組：絕對因果律解耦、動態子彈時間機制已全面實裝 ===</div>
 
     <script>
         const canvas = document.getElementById('arena');
@@ -183,6 +182,16 @@
             logPanel.scrollTop = logPanel.scrollHeight;
         }
 
+        // 🛡️ 至高天道修正：絕對因果律敵對判定函數
+        function checkIsEnemy(a, b) {
+            if (!a || !b || a.id === b.id) return false;
+            let intraRank = document.getElementById('intraRankCombat').checked;
+            if (a.team === 'C' || b.team === 'C') return true; // 散修陣營與任何人都是死敵
+            if (a.team !== b.team) return true;               // 不同門派互為死敵
+            if (intraRank) return true;                       // 同門派開啟內戰，所有人均為敵人
+            return false;
+        }
+
         class Entity {
             constructor(id, x, y, type, team) {
                 this.id = id; this.x = x; this.y = y; this.type = type; this.team = team;
@@ -209,19 +218,6 @@
             }
 
             update(dt) {
-                let timeScale = parseFloat(document.getElementById('timeScale').value) || 1.0;
-                
-                // 🔥 【法理修正：燃魂時空豁免權】
-                // 如果處於燃魂反擊期，且時間流速低於0.1x，該個體強制獲得時間增益，使其在現實世界中能流暢反擊
-                let relativityCompensation = 1.0;
-                if (this.burnSoulTimer > 0 && timeScale < 0.1) {
-                    relativityCompensation = 0.1 / timeScale; // 補償至至少 0.1x 的體感速率
-                    
-                    // 讓燃魂計時器和攻擊冷卻在現實時間中加速扣除，不被時空冰凍卡死
-                    this.burnSoulTimer -= dt * (relativityCompensation - 1);
-                    if (this.attackCdTimer > 0) this.attackCdTimer -= dt * (relativityCompensation - 1);
-                }
-
                 if (this.attackCdTimer > 0) this.attackCdTimer -= dt;
                 if (this.burnSoulTimer > 0) this.burnSoulTimer -= dt;
 
@@ -237,8 +233,6 @@
                     }
                 }
 
-                let intraRank = document.getElementById('intraRankCombat').checked;
-
                 // 1. 肉搏斥力
                 for (let ent of entities) {
                     if (ent.id === this.id) continue;
@@ -252,24 +246,25 @@
                     }
                 }
 
-                // 2. 計算移動速度（融入燃魂時空補償）
+                // 2. 計算移動速度
                 let finalSpeed = this.speed;
-                if (this.burnSoulTimer > 0) finalSpeed *= 3.5 * relativityCompensation; 
+                if (this.burnSoulTimer > 0) finalSpeed *= 3.5; 
                 
                 if (this.isDodging && (this.type === 'zhuji' || this.type === 'jindan')) {
-                    finalSpeed = DATA_CONFIG[this.type].escapeSpeed * (this.burnSoulTimer > 0 ? 2 : 1) * (this.burnSoulTimer > 0 ? relativityCompensation : 1);
+                    finalSpeed = DATA_CONFIG[this.type].escapeSpeed * (this.burnSoulTimer > 0 ? 2 : 1);
                 }
                 if (this.isDeterred) finalSpeed *= 0.12; 
                 else if (this.lingyaDebuff > 0) finalSpeed *= Math.max(0.05, 1 - this.lingyaDebuff);
 
-                // 3. 飛彈探測
+                // 3. 飛彈探測（使用絕對因果律）
                 let targetProj = null; let minDistProj = Infinity;
                 let conf = DATA_CONFIG[this.type];
 
                 if (this.type !== 'mortal') {
                     for (let p of projectiles) {
-                        let isEnemyProj = (p.attackerTeam !== this.team) || (intraRank && p.attackerType === this.type && p.attackerId !== this.id);
-                        if (!isEnemyProj) continue;
+                        let mockAttacker = { id: p.attackerId, team: p.attackerTeam, type: p.attackerType };
+                        if (!checkIsEnemy(this, mockAttacker)) continue;
+                        
                         let dp = Math.hypot(p.x - this.x, p.y - this.y);
                         if (dp < conf.dodgeDist && dp < minDistProj) {
                             let pVel = Math.hypot(p.vx, p.vy);
@@ -287,7 +282,7 @@
                         this.x = Math.random() * (canvas.width - 60) + 30;
                         this.y = Math.random() * (canvas.height - 60) + 30;
                         this.teleportCharges--;
-                        floatingTexts.push({ x: this.x, y: this.y - 30, text: "🌌 空間法則·瞬移！", color: '#ffff00', life: 20 });
+                        floatingTexts.push({ x: this.x, y: this.y - 30, text: "🌌 空間法則·瞬移！", color: '#ffff00', life: 25 });
                         addLog(totalSimulatedTime, `🌌 [瞬移] 金丹大能(ID:${this.id}) 於百納秒間洞察先機，橫渡虛空！`);
                     } else {
                         this.isDodging = true;
@@ -312,7 +307,6 @@
                         let ang = Math.atan2(enemy.y - this.y, enemy.x - this.x);
                         let dist = Math.hypot(enemy.x - this.x, enemy.y - this.y);
                         
-                        // 燃魂狀態下，強制貼臉逼近
                         let idealDist = this.burnSoulTimer > 0 ? 10 : (this.type === 'mortal' ? 1 : conf.range * 0.4);
                         let moveAngle = ang;
                         if (this.type !== 'mortal' && this.burnSoulTimer <= 0) {
@@ -338,11 +332,8 @@
 
             findNearestEnemy() {
                 let nearest = null; let minDist = Infinity;
-                let intraRank = document.getElementById('intraRankCombat').checked;
                 for (let ent of entities) {
-                    if (ent.id === this.id) continue;
-                    let isEnemy = (ent.team !== this.team) || (intraRank && ent.type === this.type);
-                    if (isEnemy) {
+                    if (checkIsEnemy(this, ent)) {
                         let d = Math.hypot(ent.x - this.x, ent.y - this.y);
                         if (d < minDist) { minDist = d; nearest = ent; }
                     }
@@ -377,10 +368,10 @@
                     }
                 }
                 else if (this.type === 'jindan') {
-                    let count = Math.floor(Math.random() * 36) + 1;
-                    addLog(totalSimulatedTime, `🪐 [萬法齊發] 金丹大能(ID:${this.id}) 威能全開！引導 ${count} 道萬寶金光！`);
+                    let count = Math.floor(Math.random() * 24) + 6;
+                    addLog(totalSimulatedTime, `🪐 [萬法齊發] 金丹大能(ID:${this.id}) 引導 ${count} 道萬寶金光！`);
                     for (let i = 0; i < count; i++) {
-                        let spread = (Math.random() - 0.5) * 0.55; 
+                        let spread = (Math.random() - 0.5) * 0.6; 
                         projectiles.push({
                             x: this.x, y: this.y, vx: Math.cos(ang + spread) * conf.spellSpeed, vy: Math.sin(ang + spread) * conf.spellSpeed,
                             damage: conf.dmg, color: '#ffff00', radius: 6, attackerId: this.id, attackerType: this.type, attackerTeam: this.team,
@@ -415,13 +406,12 @@
                 }
 
                 if (this.hpPercent <= 0) {
-                    // 🧬 金丹降境重生
                     if (this.type === 'jindan') {
-                        addLog(totalSimulatedTime, `🧬 【神魂重塑】 金丹大能(ID:${this.id}) 金丹碎滅！消耗千年壽命重聚神魂，跌落至【築基期】！`);
+                        addLog(totalSimulatedTime, `🧬 【神魂重塑】 金丹大能(ID:${this.id}) 金丹碎滅！跌落至【築基期】！`);
                         this.loadRankStats('zhuji'); 
                         this.hpPercent = 1.0;          
                         this.attackCdTimer = 0;        
-                        this.burnSoulTimer = 3.0;      // 獲得3秒相對論免疫爆發期
+                        this.burnSoulTimer = 4.0;      // 燃魂爆發4秒
                         this.hasReborn = true; 
                         floatingTexts.push({ x: this.x, y: this.y - 35, text: `🧬 降境重生·燃魂反擊！`, color: '#ff33cc', life: 40 });
                     } 
@@ -450,7 +440,6 @@
                     ctx.stroke();
                 }
 
-                // 燃魂特效
                 if (this.burnSoulTimer > 0) {
                     ctx.beginPath(); ctx.arc(this.x, this.y, this.radius + 15, 0, Math.PI * 2);
                     ctx.strokeStyle = `rgba(255, 51, 51, ${Math.sin(performance.now()/50)*0.4 + 0.5})`;
@@ -481,16 +470,12 @@
             for (let ent of entities) {
                 ent.lingyaDebuff = 0; ent.isDeterred = false; ent.suppressors = [];
             }
-            let intraRank = document.getElementById('intraRankCombat').checked;
-
             for (let boss of entities) {
                 if (boss.type === 'mortal') continue;
                 let bConf = DATA_CONFIG[boss.type];
                 let targets = [];
                 for (let target of entities) {
-                    if (target.id === boss.id) continue;
-                    let isEnemy = (target.team !== boss.team) || (intraRank && target.type === boss.type);
-                    if (!isEnemy) continue;
+                    if (!checkIsEnemy(boss, target)) continue;
 
                     let dist = Math.hypot(target.x - boss.x, target.y - boss.y);
                     if (dist <= bConf.senseRange) targets.push({ ent: target, d: dist });
@@ -522,23 +507,25 @@
             canvas.width = parseInt(document.getElementById('mapWidth').value) || 1150;
             canvas.height = parseInt(document.getElementById('mapHeight').value) || 500;
 
-            let mCount = parseInt(document.getElementById('mortalCount').value) || 0;
-            let mTeam = document.getElementById('mortalTeam').value;
-            let lCount = parseInt(document.getElementById('lianqiCount').value) || 0;
-            let lTeam = document.getElementById('lianqiTeam').value;
-            let zCount = parseInt(document.getElementById('zhujiCount').value) || 0;
-            let zTeam = document.getElementById('zhujiTeam').value;
-            let jCount = parseInt(document.getElementById('jindanCount').value) || 0;
-            let jTeam = document.getElementById('jindanTeam').value;
+            let mCount = parseInt(document.getElementById('mortalCount').value) || 0; let mTeam = document.getElementById('mortalTeam').value;
+            let lCount = parseInt(document.getElementById('lianqiCount').value) || 0; let lTeam = document.getElementById('lianqiTeam').value;
+            let zCount = parseInt(document.getElementById('zhujiCount').value) || 0; let zTeam = document.getElementById('zhujiTeam').value;
+            let jCount = parseInt(document.getElementById('jindanCount').value) || 0; let jTeam = document.getElementById('jindanTeam').value;
 
             let globalId = 0;
-            for (let i = 0; i < mCount; i++) entities.push(new Entity(globalId++, Math.random() * 150 + 50, Math.random() * (canvas.height - 100) + 50, 'mortal', mTeam));
-            for (let i = 0; i < lCount; i++) entities.push(new Entity(globalId++, Math.random() * (canvas.width - 500) + 250, Math.random() * (canvas.height - 100) + 50, 'lianqi', lTeam));
-            for (let i = 0; i < zCount; i++) entities.push(new Entity(globalId++, i % 2 === 0 ? 300 : canvas.width - 300, canvas.height/2 + (Math.random()-0.5)*180, 'zhuji', zTeam));
-            for (let i = 0; i < jCount; i++) entities.push(new Entity(globalId++, canvas.width/2 + (Math.random()-0.5)*100, canvas.height/2 + (Math.random()-0.5)*100, 'jindan', jTeam));
+            for (let i = 0; i < mCount; i++) entities.push(new Entity(globalId++, Math.random() * 100 + 50, Math.random() * (canvas.height - 100) + 50, 'mortal', mTeam));
+            for (let i = 0; i < lCount; i++) entities.push(new Entity(globalId++, Math.random() * 200 + 100, Math.random() * (canvas.height - 100) + 50, 'lianqi', lTeam));
+            for (let i = 0; i < zCount; i++) entities.push(new Entity(globalId++, i % 2 === 0 ? 200 : canvas.width - 200, canvas.height/2 + (Math.random()-0.5)*100, 'zhuji', zTeam));
+            
+            // 單挑特別優化生成位置：分立兩側，方便觀測
+            for (let i = 0; i < jCount; i++) {
+                let xPos = jCount === 2 ? (i === 0 ? 150 : canvas.width - 150) : canvas.width/2 + (Math.random()-0.5)*200;
+                let yPos = canvas.height/2 + (i === 0 ? -30 : 30);
+                entities.push(new Entity(globalId++, xPos, yPos, 'jindan', jTeam));
+            }
 
             gameActive = true;
-            logPanel.innerHTML = "=== 天道輪迴重組：微觀觀測開啟，相對論豁免已就緒 ===";
+            logPanel.innerHTML = "=== 天道因果重塑：1v1單挑完全修復，動態子彈時間調校完畢 ===";
         }
 
         function advancePhysicsStep(dt) {
@@ -546,7 +533,6 @@
             computeLingyaSystem(dt);
 
             for (let ent of entities) ent.update(dt);
-            let intraRank = document.getElementById('intraRankCombat').checked;
 
             for (let i = projectiles.length - 1; i >= 0; i--) {
                 let p = projectiles[i];
@@ -554,9 +540,8 @@
                 let explodeTriggered = false;
 
                 for (let ent of entities) {
-                    if (ent.id === p.attackerId) continue;
-                    let isEnemy = (ent.team !== p.attackerTeam) || (intraRank && ent.type === p.attackerType);
-                    if (isEnemy) {
+                    let mockAttacker = { id: p.attackerId, team: p.attackerTeam, type: p.attackerType };
+                    if (checkIsEnemy(ent, mockAttacker)) {
                         let d = Math.hypot(ent.x - p.x, ent.y - p.y);
                         if (d <= p.fuseRadius + ent.radius) { explodeTriggered = true; break; }
                     }
@@ -583,7 +568,7 @@
             if (entities.length <= 1) {
                 gameActive = false;
                 if (entities.length === 1) addLog(totalSimulatedTime, `🏆 【終局】 最終存活大能：${DATA_CONFIG[entities[0].type].name}(ID:${entities[0].id}) 唯我獨尊！`);
-                else addLog(totalSimulatedTime, `💀 【大荒俱寂】 全場因果盡散！`);
+                else addLog(totalSimulatedTime, `💀 【大荒俱寂】 因果盡散！`);
             }
         }
 
@@ -596,19 +581,22 @@
 
             if (gameActive) {
                 totalRealTime += frameDelta;
-                let timeScaleSelect = document.getElementById('timeScale');
-                let timeScale = parseFloat(timeScaleSelect.value) || 1.0;
+                let timeScaleSelect = document.getElementById('timeScale').value;
+                let timeScale = 1.0;
                 
-                // 🔥 【法理修正：天道時空自動解封機制】
-                // 檢查戰場上是否還有任何活著的金丹期大能
-                let hasJindan = entities.some(e => e.type === 'jindan');
-                if (!hasJindan && timeScale < 0.1) {
-                    timeScaleSelect.value = "0.1"; // 自動切換回常規慢速
-                    timeScale = 0.1;
-                    addLog(totalSimulatedTime, "🌌 【天道時空解封】 戰場已無金丹大能！極微觀時空自動解除，流速恢復至 0.1x 慢速解析！");
+                // 🎬 【🎬 至高技術實裝：天道自動子彈時間引擎】
+                if (timeScaleSelect === 'auto') {
+                    // 只要場上有任何金丹正在「極限閃避中」，或者剛觸發「瞬移/萬法齊發」特效，就瞬間降維到 0.00001x
+                    let hasHighIntensityAction = entities.some(e => e.type === 'jindan' && e.isDodging) || 
+                                                 floatingTexts.some(t => t.text.includes("瞬移") || t.text.includes("萬法"));
+                    
+                    timeScale = hasHighIntensityAction ? 0.00001 : 0.25; // 平時 0.25x 順暢奔跑，對決瞬間 0.00001x 定格
+                } else {
+                    timeScale = parseFloat(timeScaleSelect) || 1.0;
                 }
 
-                let steps = timeScale < 0.001 ? 1 : (timeScale > 10 ? 25 : 12); 
+                // 根據流速動態分配物理步長，防止超低流速時卡死
+                let steps = timeScale < 0.00002 ? 1 : 12; 
                 let step_dt = (frameDelta * timeScale) / steps;
                 
                 if (frameDelta < 0.4) {
@@ -622,6 +610,7 @@
                 realTimeDisplay.innerText = totalRealTime.toFixed(2);
             }
 
+            // 繪製威壓聯結線
             for (let ent of entities) {
                 if (ent.suppressors.length > 0) {
                     for (let s of ent.suppressors) {
@@ -650,7 +639,7 @@
             }
 
             for (let i = floatingTexts.length - 1; i >= 0; i--) {
-                let ft = floatingTexts[i]; ft.y -= 0.5; ft.life--;
+                let ft = floatingTexts[i]; ft.y -= 0.4; ft.life--;
                 if (ft.life <= 0) floatingTexts.splice(i, 1);
                 else {
                     ctx.fillStyle = ft.color; ctx.font = 'bold 11px monospace'; ctx.textAlign = 'center';
