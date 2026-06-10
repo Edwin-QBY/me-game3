@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>高維修仙數據演武場 - 狂暴靈壓與極速優化版</title>
+    <title>高維修仙數據演武場 - 完美同步與動態平衡版</title>
     <style>
         body {
             margin: 0; padding: 15px;
@@ -65,7 +65,7 @@
 </head>
 <body>
 
-    <h1>高維修仙戰鬥模擬器 (絕對天威·全火力優化版)</h1>
+    <h1>高維修仙戰鬥模擬器 (時鐘硬同步與精彩博弈版)</h1>
     
     <div class="timer-container">
         <div class="t-real">🖥️ 現實觀測時間: <span id="realTimeDisplay">0.00</span> 秒</div>
@@ -75,15 +75,15 @@
     <div id="control-panel">
         <div class="faction-container">
             <div class="faction-box f-mortal">
-                <h3>凡人 <span class="eval">狀態：極度危險</span></h3>
-                <div class="row"><label>數量：</label><input type="number" id="mortalCount" value="3"></div>
+                <h3>凡人 <span class="eval">狀態：天威螻蟻</span></h3>
+                <div class="row"><label>數量：</label><input type="number" id="mortalCount" value="5"></div>
                 <div class="row"><label>陣營：</label>
                     <select id="mortalTeam"><option value="A">天道盟 (A)</option><option value="B">魔道宗 (B)</option><option value="C" selected>散修 (C)</option></select>
                 </div>
-                <div class="row"><label>天威防禦：</label><span style="color:#ff3333;">無（遇靈壓即秒殺）</span></div>
+                <div class="row"><label>天威防禦：</label><span style="color:#ff3333;">無（觸碰靈壓即汽化）</span></div>
             </div>
             <div class="faction-box f-lianqi">
-                <h3>煉氣期1-10層 <span class="eval">技能：雙重彈幕</span></h3>
+                <h3>煉氣期1-10層 <span class="eval">技能：多段飛劍</span></h3>
                 <div class="row"><label>數量：</label><input type="number" id="lianqiCount" value="3"></div>
                 <div class="row"><label>陣營：</label>
                     <select id="lianqiTeam"><option value="A" selected>天道盟 (A)</option><option value="B">魔道宗 (B)</option><option value="C">獨立 (C)</option></select>
@@ -91,7 +91,7 @@
                 <div class="row"><label>技能庫：</label><span>🔥彈幕火球 / 🗡️疾速御劍</span></div>
             </div>
             <div class="faction-box f-zhuji">
-                <h3>築基初-後期 <span class="eval">天威：絕對抹殺</span></h3>
+                <h3>築基築基期 <span class="eval">狀態：大能對決</span></h3>
                 <div class="row"><label>數量：</label><input type="number" id="zhujiCount" value="2"></div>
                 <div class="row"><label>陣營：</label>
                     <select id="zhujiTeam"><option value="A">天道盟 (A)</option><option value="B" selected>魔道宗 (B)</option><option value="C">獨立 (C)</option></select>
@@ -106,8 +106,8 @@
                 <label>高(米)：</label><input type="number" id="mapHeight" value="500" min="400" max="900">
                 <label>神識流速調校：</label>
                 <select id="timeScale">
-                    <option value="0.05">0.05x 慢速解析身法</option>
-                    <option value="1.0" selected>1.00x 真實流速</option>
+                    <option value="0.1">0.10x 慢速解析神識身法</option>
+                    <option value="1.0" selected>1.00x 修仙界真實流速</option>
                     <option value="10.0">10.00x 縮地成寸·高頻搏殺</option>
                     <option value="50.0">50.00x 大道化簡·萬法瞬結</option>
                 </select>
@@ -120,7 +120,7 @@
     </div>
 
     <canvas id="arena" width="1100" height="500"></canvas>
-    <div id="log-panel">=== 演武場狂暴重組：DOM卡頓阻斷器布設完成、主動殺傷性靈壓加載、修士多段神通就緒 ===</div>
+    <div id="log-panel">=== 演武大陣重調完畢：動態時間切片器部署，大修戰鬥數值再平衡載入 ===</div>
 
     <script>
         const canvas = document.getElementById('arena');
@@ -133,31 +133,30 @@
         let entities = []; let projectiles = []; let particles = []; let floatingTexts = [];
         let gameActive = false;
         
-        const SIM_DT = 0.0001; 
-        let totalSimulatedTime = 0; let totalRealTime = 0; let speedAccumulator = 0;
+        let totalSimulatedTime = 0; let totalRealTime = 0;
         let lastFrameTime = performance.now();
 
-        // 數據調整：大幅加快射擊頻率（降低attackCd），實裝靈壓基礎秒殺功率
+        // 💥 數值大重組：平衡彈道與閃避比率，優化護盾厚度，杜絕瞬間秒殺與永遠打不中
         const DATA_CONFIG = {
             mortal: {
                 name: '凡人', color: '#888888', radius: 6, rank: 0,
-                bodyArmor: 0.002, speed: 12, maxShieldTnt: 0, maxShieldHits: 0,
-                attackCd: 0.8, range: 15, dmg: 0.0005, spellSpeed: 12,
+                bodyArmor: 0.01, speed: 18, maxShieldTnt: 0, maxShieldHits: 0,
+                attackCd: 0.6, range: 15, dmg: 0.001, spellSpeed: 20,
                 senseRange: 0, lingyaPower: 0
             },
             lianqi: {
                 name: '煉氣修士', color: '#4dff4d', radius: 9, rank: 1,
-                bodyArmor: 0.12, speed: 340, maxShieldTnt: 0.28, maxShieldHits: 100,
-                attackCd: 0.12, range: 450, dmg: 3.5, spellSpeed: 1100, // CD 0.4s -> 0.12s 瘋狂射擊
-                blastRadius: 60, fuseRadius: 20, dodgeDist: 150,
-                senseRange: 120, lingyaPower: 80 
+                bodyArmor: 20, speed: 180, maxShieldTnt: 300, maxShieldHits: 30,
+                attackCd: 0.12, range: 350, dmg: 45, spellSpeed: 1400, 
+                blastRadius: 50, fuseRadius: 15, dodgeDist: 120,
+                senseRange: 150, lingyaPower: 120 
             },
             zhuji: {
                 name: '築基大修', color: '#ff33cc', radius: 13, rank: 2,
-                bodyArmor: 150, speed: 7140, escapeSpeed: 14280, maxShieldTnt: 3650, maxShieldHits: 900,
-                attackCd: 0.15, range: 900, dmg: 5000, spellSpeed: 18000, // CD 0.6s -> 0.15s 神通暴雨
-                blastRadius: 160, fuseRadius: 45, dodgeDist: 400,
-                senseRange: 600, lingyaPower: 4500 // 靈壓強度大幅飆升，具備實體瞬殺威能
+                bodyArmor: 600, speed: 900, escapeSpeed: 1800, maxShieldTnt: 3000, maxShieldHits: 80,
+                attackCd: 0.08, range: 800, dmg: 750, spellSpeed: 4800, // 彈道速度 4800 vs 閃避速度 1800，近距離必中！
+                blastRadius: 130, fuseRadius: 35, dodgeDist: 350,
+                senseRange: 550, lingyaPower: 6000 
             }
         };
 
@@ -175,14 +174,12 @@
                 this.radius = conf.radius; this.speed = conf.speed; this.rank = conf.rank;
                 this.shieldTnt = conf.maxShieldTnt; this.shieldHits = conf.maxShieldHits;
                 this.bodyAlive = true; this.hpPercent = 1.0;
-                this.attackCdTimer = Math.random() * 0.1;
+                this.attackCdTimer = Math.random() * 0.05;
                 this.orbitDirection = Math.random() > 0.5 ? 1 : -1;
                 this.hasReborn = false;
                 this.isDodging = false; this.wasDodgingBefore = false;
                 
-                // 靈壓受體參數
                 this.lingyaDebuff = 0; this.isDeterred = false; this.suppressors = [];
-                this.textThrottle = Math.random(); // 減少飄字堆疊優化性能
             }
 
             update(dt) {
@@ -190,11 +187,11 @@
 
                 let intraRank = document.getElementById('intraRankCombat').checked;
 
-                // 1. 空間物理解除：凡人間距極小化
+                // 1. 凡人與基礎肉搏斥力
                 for (let ent of entities) {
                     if (ent.id === this.id) continue;
                     let d = Math.hypot(ent.x - this.x, ent.y - this.y);
-                    let safetyBuffer = (this.type === 'mortal' || ent.type === 'mortal') ? 1 : 65;
+                    let safetyBuffer = (this.type === 'mortal' || ent.type === 'mortal') ? 1 : 55;
                     let minDist = this.radius + ent.radius + safetyBuffer;
                     if (d < minDist) {
                         let push = (minDist - d) * 0.8;
@@ -203,13 +200,13 @@
                     }
                 }
 
-                // 2. 靈壓重力降速
+                // 2. 靈壓阻力限制
                 let finalSpeed = this.speed;
                 if (this.isDodging && this.type === 'zhuji') finalSpeed = DATA_CONFIG.zhuji.escapeSpeed;
-                if (this.isDeterred) finalSpeed *= 0.1; 
-                else if (this.lingyaDebuff > 0) finalSpeed *= Math.max(0.02, 1 - this.lingyaDebuff);
+                if (this.isDeterred) finalSpeed *= 0.12; 
+                else if (this.lingyaDebuff > 0) finalSpeed *= Math.max(0.05, 1 - this.lingyaDebuff);
 
-                // 3. 飛彈探測閃避
+                // 3. 飛彈探測身法
                 let targetProj = null; let minDistProj = Infinity;
                 let conf = DATA_CONFIG[this.type];
 
@@ -222,13 +219,13 @@
                             let pVel = Math.hypot(p.vx, p.vy);
                             if (pVel > 0) {
                                 let dot = ((this.x - p.x)*p.vx + (this.y - p.y)*p.vy) / (dp * pVel);
-                                if (dot > 0.3) { targetProj = p; minDistProj = dp; }
+                                if (dot > 0.4) { targetProj = p; minDistProj = dp; }
                             }
                         }
                     }
                 }
 
-                // 4. 位移
+                // 4. 移動走位
                 if (targetProj) {
                     this.isDodging = true;
                     let pVel = Math.hypot(targetProj.vx, targetProj.vy);
@@ -236,15 +233,13 @@
                     let side = ((this.x - targetProj.x)*perpX + (this.y - targetProj.y)*perpY > 0) ? 1 : -1;
                     this.x += perpX * side * finalSpeed * dt; this.y += perpY * side * finalSpeed * dt;
 
-                    if (!this.wasDodgingBefore) {
+                    if (!this.wasDodgingBefore && Math.random() < 0.1) {
                         this.wasDodgingBefore = true;
-                        if (Math.random() < 0.3) {
-                            floatingTexts.push({
-                                x: this.x, y: this.y - 25,
-                                text: this.type === 'zhuji' ? "⚡ 42M 遁術" : "💨 身法閃避",
-                                life: 20, color: this.type === 'zhuji' ? '#ff33cc' : '#4dff4d'
-                            });
-                        }
+                        floatingTexts.push({
+                            x: this.x, y: this.y - 25,
+                            text: this.type === 'zhuji' ? "⚡ 挪移" : "💨 閃避",
+                            life: 15, color: this.type === 'zhuji' ? '#ff33cc' : '#4dff4d'
+                        });
                     }
                 } else {
                     this.isDodging = false; this.wasDodgingBefore = false;
@@ -252,11 +247,11 @@
                     if (enemy) {
                         let ang = Math.atan2(enemy.y - this.y, enemy.x - this.x);
                         let dist = Math.hypot(enemy.x - this.x, enemy.y - this.y);
-                        let idealDist = this.type === 'mortal' ? 1 : conf.range * 0.6;
+                        let idealDist = this.type === 'mortal' ? 1 : conf.range * 0.5;
                         let moveAngle = ang;
                         if (this.type !== 'mortal') {
-                            if (dist > idealDist + 30) moveAngle = ang + (Math.PI / 4) * this.orbitDirection;
-                            else if (dist < idealDist - 30) moveAngle = ang + (Math.PI * 0.75) * this.orbitDirection;
+                            if (dist > idealDist + 20) moveAngle = ang + (Math.PI / 4.5) * this.orbitDirection;
+                            else if (dist < idealDist - 20) moveAngle = ang + (Math.PI * 0.7) * this.orbitDirection;
                             else moveAngle = ang + (Math.PI / 2) * this.orbitDirection;
                         }
                         this.x += Math.cos(moveAngle) * finalSpeed * dt;
@@ -267,7 +262,7 @@
                 this.x = Math.max(this.radius, Math.min(canvas.width - this.radius, this.x));
                 this.y = Math.max(this.radius, Math.min(canvas.height - this.radius, this.y));
 
-                // 5. 攻擊手段擴充（切換多重法門）
+                // 5. 釋放攻擊手段
                 let enemy = this.findNearestEnemy();
                 if (enemy && this.attackCdTimer <= 0) {
                     let dist = Math.hypot(enemy.x - this.x, enemy.y - this.y);
@@ -289,7 +284,6 @@
                 return nearest;
             }
 
-            // 修改點二：大幅增加攻擊手段與視覺花樣
             fireAttack(target) {
                 let conf = DATA_CONFIG[this.type];
                 this.attackCdTimer = conf.attackCd;
@@ -301,39 +295,38 @@
                 else if (this.type === 'lianqi') {
                     let r = Math.random();
                     if (r < 0.5) {
-                        // 招式一：原本的火球彈幕
                         projectiles.push({
                             x: this.x, y: this.y, vx: Math.cos(ang) * conf.spellSpeed, vy: Math.sin(ang) * conf.spellSpeed,
                             damage: conf.dmg, color: '#4dff4d', radius: 4, attackerId: this.id, attackerType: this.type, attackerTeam: this.team,
-                            fuseRadius: conf.fuseRadius, blastRadius: conf.blastRadius, style: 'fireball'
+                            fuseRadius: conf.fuseRadius, blastRadius: conf.blastRadius
                         });
                     } else {
-                        // 招式二：追加【疾速御劍】（極速、窄範圍、貫穿意象）
+                        // 招式二：疾速御劍
                         projectiles.push({
-                            x: this.x, y: this.y, vx: Math.cos(ang) * conf.spellSpeed * 1.6, vy: Math.sin(ang) * conf.spellSpeed * 1.6,
-                            damage: conf.dmg * 1.5, color: '#00ffcc', radius: 2, attackerId: this.id, attackerType: this.type, attackerTeam: this.team,
-                            fuseRadius: 10, blastRadius: 20, style: 'sword'
+                            x: this.x, y: this.y, vx: Math.cos(ang) * conf.spellSpeed * 1.4, vy: Math.sin(ang) * conf.spellSpeed * 1.4,
+                            damage: conf.dmg * 1.2, color: '#00ffcc', radius: 2, attackerId: this.id, attackerType: this.type, attackerTeam: this.team,
+                            fuseRadius: 10, blastRadius: 25
                         });
                     }
                 } 
                 else if (this.type === 'zhuji') {
                     let r = Math.random();
                     if (r < 0.6) {
-                        // 神通一：原本的真元大弩
-                        let count = Math.floor(Math.random() * 4) + 3;
+                        let count = Math.floor(Math.random() * 3) + 2;
                         for (let i = 0; i < count; i++) {
-                            let spread = (Math.random() - 0.5) * 0.2;
+                            let spread = (Math.random() - 0.5) * 0.15;
                             projectiles.push({
                                 x: this.x, y: this.y, vx: Math.cos(ang + spread) * conf.spellSpeed, vy: Math.sin(ang + spread) * conf.spellSpeed,
                                 damage: conf.dmg, color: '#ff33cc', radius: 5, attackerId: this.id, attackerType: this.type, attackerTeam: this.team,
-                                fuseRadius: conf.fuseRadius, blastRadius: conf.blastRadius, style: 'crossbow'
+                                fuseRadius: conf.fuseRadius, blastRadius: conf.blastRadius
                             });
                         }
                     } else {
-                        // 神通二：追加高維【天基神雷】（無視彈道，直接在敵方頭頂引爆真元核）
-                        addLog(totalSimulatedTime, `⚡ [九天玄雷] 築基大修(ID:${this.id}) 神識鎖定，天降真元爆轟！`);
-                        let attackerInfo = { attackerId: this.id, attackerType: this.type, attackerTeam: this.team };
-                        triggerExplosion(target.x + (Math.random()-0.5)*30, target.y + (Math.random()-0.5)*30, conf.blastRadius * 0.9, conf.dmg * 1.2, attackerInfo);
+                        // 神通二：天基神雷 (導入合理的蓄能與降幅，不再一擊必殺)
+                        if (Math.random() < 0.4) {
+                            let attackerInfo = { attackerId: this.id, attackerType: this.type, attackerTeam: this.team };
+                            triggerExplosion(target.x + (Math.random()-0.5)*20, target.y + (Math.random()-0.5)*20, conf.blastRadius * 0.8, conf.dmg * 1.1, attackerInfo);
+                        }
                     }
                 }
             }
@@ -345,23 +338,20 @@
 
                 if (actualTntDmg <= 0) return;
 
-                // 靈壓與技能皆會無情撕裂護盾
+                // 護盾機制優化：單次傷害(750)小於大修防禦上限(3000)，因此會優先扣除「護盾抗擊次數」，實現持久對轟
                 if (this.shieldHits > 0 && conf.maxShieldTnt > 0) {
                     this.shieldHits--;
                     if (actualTntDmg <= conf.maxShieldTnt) {
-                        if (Math.random() < 0.05) {
-                            floatingTexts.push({ x: this.x, y: this.y - 12, text: isLingya ? `🛡️ 抵禦天威威壓` : `🛡️ 護盾抗落`, color: '#00ffff', life: 15 });
-                        }
-                        return;
+                        return; // 護盾完美承受，不破裂
                     } else {
                         actualTntDmg -= conf.maxShieldTnt; this.shieldHits = 0;
-                        floatingTexts.push({ x: this.x, y: this.y - 15, text: `💥 護盾徹底崩碎！`, color: '#ff00ff', life: 25 });
+                        floatingTexts.push({ x: this.x, y: this.y - 15, text: `💥 護盾碎！`, color: '#ff00ff', life: 15 });
                     }
                 }
 
                 // 肉身承受
                 if (actualTntDmg <= conf.bodyArmor) {
-                    this.hpPercent -= (actualTntDmg / conf.bodyArmor) * 0.1;
+                    this.hpPercent -= (actualTntDmg / conf.bodyArmor) * 0.04; // 破盾後的擦傷與震盪緩慢扣血
                 } else {
                     let overDmg = actualTntDmg - conf.bodyArmor;
                     this.hpPercent -= (overDmg / conf.bodyArmor); 
@@ -369,11 +359,11 @@
 
                 if (this.hpPercent <= 0) {
                     if (this.type === 'zhuji' && !this.hasReborn) {
-                        this.hasReborn = true; this.hpPercent = 0.4; this.speed = conf.speed * 0.5; this.shieldHits = 0;
-                        addLog(totalSimulatedTime, `🩸 【滴血重生】 築基大修(ID:${this.id}) 燃血重塑，實力大跌！`);
+                        this.hasReborn = true; this.hpPercent = 0.5; this.speed = conf.speed * 0.6; this.shieldHits = conf.maxShieldHits / 2;
+                        addLog(totalSimulatedTime, `🩸 【滴血重生】 築基大修(ID:${this.id}) 燃燒精血逆天續命！`);
                     } else {
                         this.bodyAlive = false;
-                        let ripText = isLingya ? `被 築基大修 的實體靈壓直接碾成血霧秒殺` : `碎為劫灰`;
+                        let ripText = isLingya ? `被高階靈壓直接融化汽化` : `碎為劫灰`;
                         addLog(totalSimulatedTime, `💀 【殞落】 ${conf.name}(ID:${this.id}) ${ripText}！`);
                     }
                 }
@@ -405,7 +395,7 @@
         function triggerExplosion(x, y, blastRadius, maxDamage, attacker) {
             particles.push({ x: x, y: y, r: 2, maxR: blastRadius, type: attacker.attackerType, isWave: true });
             for (let ent of entities) {
-                if (ent.id === attacker.attackerId) continue; // 免疫自己
+                if (ent.id === attacker.attackerId) continue; // 免疫施術者本人的法術餘波
                 let dist = Math.hypot(ent.x - x, ent.y - y);
                 if (dist <= blastRadius + ent.radius) {
                     ent.takeDamage(maxDamage, dist, blastRadius, attacker, false);
@@ -413,8 +403,8 @@
             }
         }
 
-        // 修改點三：實裝「主動主體殺傷性靈壓」，持續秒殺/重創低境界
-        function computeLingyaSystem() {
+        // ⚡ 殺傷性靈壓系統：高境界對低境界造成無死角持續壓制與消磨
+        function computeLingyaSystem(dt) {
             for (let ent of entities) {
                 ent.lingyaDebuff = 0; ent.isDeterred = false; ent.suppressors = [];
             }
@@ -439,27 +429,25 @@
 
                 if (targets.length === 0) continue;
 
-                // 總靈壓分攤機制
+                // 總靈壓分攤
                 let sharedPower = bConf.lingyaPower / targets.length;
 
                 for (let tObj of targets) {
                     let tgt = tObj.ent;
                     
-                    // 如果存在境界差距，主動引導殺傷性精神與肉體重力碾壓
+                    // 🌟 嚴格判定：高境界對低境界施加絕對抹殺
                     if (boss.rank > tgt.rank) {
                         tgt.isDeterred = true;
                         
-                        // 💥 靈壓實體天威殺傷計算：
+                        // 靈壓天威實體化扣血 (每秒傷害功率 = 剩餘分攤念力 * 境界差距 * 系數)
                         let rankDiff = boss.rank - tgt.rank;
-                        // 每秒靈壓傷害（噸級/千克級 TNT 混合體系微縮化）
-                        let lingyaDmgPerSec = sharedPower * rankDiff * 45; 
-                        let lingyaDmgPerStep = lingyaDmgPerSec * SIM_DT;
+                        let lingyaDmgPerSec = sharedPower * rankDiff * 4; 
+                        let lingyaDmgPerStep = lingyaDmgPerSec * dt;
                         
-                        // 進行無死角持續壓制扣血
                         tgt.takeDamage(lingyaDmgPerStep, 0, 1, { attackerId: boss.id, attackerType: boss.type, attackerTeam: boss.team }, true);
                     }
 
-                    let suppressFactor = sharedPower / 500;
+                    let suppressFactor = sharedPower / 600;
                     tgt.lingyaDebuff += suppressFactor;
                     tgt.suppressors.push({ x: boss.x, y: boss.y, type: boss.type });
                 }
@@ -468,7 +456,7 @@
 
         function setupGame() {
             entities = []; projectiles = []; particles = []; floatingTexts = [];
-            totalSimulatedTime = 0; totalRealTime = 0; speedAccumulator = 0;
+            totalSimulatedTime = 0; totalRealTime = 0;
             lastFrameTime = performance.now();
 
             canvas.width = parseInt(document.getElementById('mapWidth').value) || 1100;
@@ -494,20 +482,20 @@
             }
 
             gameActive = true;
-            logPanel.innerHTML = "=== 天道陣啟：殺傷性力場全開，大修終局DOM卡頓阻斷器加載完畢 ===";
+            logPanel.innerHTML = "=== 大陣開啟：動態時間切片部署完畢，雙界時間軸已精確鎖定 ===";
         }
 
-        function advancePhysicsStep() {
-            totalSimulatedTime += SIM_DT;
-            computeLingyaSystem();
+        function advancePhysicsStep(dt) {
+            totalSimulatedTime += dt;
+            computeLingyaSystem(dt);
 
-            for (let ent of entities) ent.update(SIM_DT);
+            for (let ent of entities) ent.update(dt);
 
             let intraRank = document.getElementById('intraRankCombat').checked;
 
             for (let i = projectiles.length - 1; i >= 0; i--) {
                 let p = projectiles[i];
-                p.x += p.vx * SIM_DT; p.y += p.vy * SIM_DT;
+                p.x += p.vx * dt; p.y += p.vy * dt;
                 let explodeTriggered = false;
 
                 for (let ent of entities) {
@@ -533,22 +521,22 @@
             for (let i = particles.length - 1; i >= 0; i--) {
                 let pt = particles[i];
                 if (pt.isWave) {
-                    pt.r += pt.type === 'zhuji' ? 2600 * SIM_DT : 1000 * SIM_DT;
+                    pt.r += pt.type === 'zhuji' ? 2000 * dt : 800 * dt;
                     if (pt.r >= pt.maxR) particles.splice(i, 1);
                 }
             }
 
-            // 修改點一：DOM卡頓阻斷器。一分出勝負立刻修改標記，停止子步，拒絕重複寫入DOM
             if (entities.length <= 1) {
-                gameActive = false; 
+                gameActive = false;
                 if (entities.length === 1) {
-                    addLog(totalSimulatedTime, `🏆 【演武終局】 最終存活大能：${DATA_CONFIG[entities[0].type].name}(ID:${entities[0].id} / 陣營:${entities[0].team}) 傲視群雄！`);
+                    addLog(totalSimulatedTime, `🏆 【終局】 最終存活者：${DATA_CONFIG[entities[0].type].name}(ID:${entities[0].id} / 陣營:${entities[0].team})！`);
                 } else {
-                    addLog(totalSimulatedTime, `💀 【天道同消】 萬法歸無，全戰場灰飛煙滅！`);
+                    addLog(totalSimulatedTime, `💀 【因果消散】 全員化為劫灰，演武大陣寂滅！`);
                 }
             }
         }
 
+        // 👁️ 核心改動：動態切片時鐘控制器
         function gameLoop() {
             let now = performance.now();
             let frameDelta = (now - lastFrameTime) / 1000;
@@ -560,21 +548,18 @@
                 totalRealTime += frameDelta;
                 let timeScale = parseFloat(document.getElementById('timeScale').value) || 1.0;
                 
-                speedAccumulator += frameDelta * timeScale;
-                // 安全限制防止死循環，但完美支撐 50 倍速度
-                let maxStepsPerFrame = 2500; 
-                let steps = 0;
+                // 🛠️ 完美的動態時間同步法：
+                // 不管 timeScale 是一萬還是一百，我們都在這一幀裏「切出固定次數」的物理子步。
+                // 這樣能保證：總模擬時間增量 = 幀現實時間 * 慢放流速。絕不會發生時鐘不匹配或卡頓！
+                let steps = timeScale > 10 ? 25 : 12; 
+                let step_dt = (frameDelta * timeScale) / steps;
                 
-                while (speedAccumulator >= SIM_DT && steps < maxStepsPerFrame) {
-                    advancePhysicsStep();
-                    steps++;
-                    // 🔥 關鍵卡頓優化：如果在子步中已經分出勝負，立刻清空累積器，跳出循環
-                    if (!gameActive) {
-                        speedAccumulator = 0;
-                        break;
+                if (frameDelta < 0.4) { // 避免瀏覽器切換分頁時時間暴走
+                    for (let i = 0; i < steps; i++) {
+                        if (!gameActive) break; // 贏的瞬間立刻中斷子步，徹底杜絕連環渲染卡頓 Bug
+                        advancePhysicsStep(step_dt);
                     }
                 }
-                if(speedAccumulator > SIM_DT * 10) speedAccumulator = 0; // 邊界保護
 
                 simTimeDisplay.innerText = totalSimulatedTime.toFixed(6);
                 realTimeDisplay.innerText = totalRealTime.toFixed(2);
