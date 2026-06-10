@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>諸天演武場 - 全局天道視角版</title>
+    <title>諸天演武場 - 天崩地裂可破壞版</title>
     <style>
         body {
             margin: 0; padding: 10px;
@@ -60,7 +60,6 @@
         }
         #startBtn:hover { transform: scale(1.02); box-shadow: 0 0 10px rgba(0,255,204,0.5); }
         
-        /* 核心修改：利用 Flex 與 max-height 確保畫布在任何螢幕都完全不溢出 */
         .canvas-container {
             flex: 1; width: 100%; max-width: 1400px; display: flex; justify-content: center; align-items: center; margin: 6px 0; overflow: hidden;
         }
@@ -78,7 +77,7 @@
 </head>
 <body>
 
-    <h1>諸天演武場 - 全局天道視角版</h1>
+    <h1>諸天演武場 - 天崩地裂可破壞版</h1>
     
     <div class="timer-container">
         <div class="t-real">🖥️ 現實觀測: <span id="realTimeDisplay">0.00</span> 秒</div>
@@ -109,7 +108,7 @@
                 </div>
             </div>
             <div class="faction-box f-jindan">
-                <h3>金丹大能 <span class="eval" style="color:#ffff00;">技能：萬法 / 瞬移</span></h3>
+                <h3>金丹大能 <span class="eval" style="color:#ffff00;">技能：万法 / 瞬移</span></h3>
                 <div class="row"><label>數量：</label><input type="number" id="jindanCount" value="0"></div>
                 <div class="row"><label>陣營：</label>
                     <select id="jindanTeam"><option value="A">天道盟</option><option value="B">魔道宗</option><option value="C" selected>獨立散修</option></select>
@@ -148,7 +147,7 @@
         <canvas id="arena" width="1600" height="900"></canvas>
     </div>
     
-    <div id="log-panel">=== 演武天幕：天道畫面已全面重構，大縮放無視滾動條，請落子配置！ ===</div>
+    <div id="log-panel">=== 演武天幕：已加載「天崩地裂·障礙物可破壞」法則，高階修士法術可將建築轟至灰飛煙滅！ ===</div>
 
     <script>
         const canvas = document.getElementById('arena');
@@ -168,7 +167,7 @@
         const DATA_CONFIG = {
             mortal: {
                 name: '凡人', color: '#888888', radius: 10, rank: 0,
-                bodyArmor: 0.01, speed: 30, maxShieldTnt: 0, maxShieldHits: 0,
+                bodyArmor: 0.01, speed: 45, maxShieldTnt: 0, maxShieldHits: 0,
                 attackCd: 0.6, range: 25, dmg: 0.001, spellSpeed: 30, senseRange: 0, lingyaPower: 0
             },
             lianqi: {
@@ -225,11 +224,13 @@
         function spawnBuildings(w, h) {
             buildings = [];
             let num = Math.min(12, Math.max(3, Math.floor((w * h) / 240000)));
+            let baseHp = 30000; // 護宗建物防禦血量
             for (let i = 0; i < num; i++) {
                 buildings.push({
                     x: Math.random() * (w - 400) + 200, y: Math.random() * (h - 300) + 150,
                     w: Math.random() * 120 + 90, h: Math.random() * 120 + 90,
-                    name: BUILDING_NAMES[Math.floor(Math.random() * BUILDING_NAMES.length)]
+                    name: BUILDING_NAMES[Math.floor(Math.random() * BUILDING_NAMES.length)],
+                    maxHp: baseHp, hp: baseHp
                 });
             }
         }
@@ -259,14 +260,21 @@
                     this.trail[i].alpha -= dt * 3.0; if (this.trail[i].alpha <= 0) this.trail.splice(i, 1);
                 }
 
-                // 單位間相互斥力
                 for (let ent of entities) {
                     if (ent.id === this.id) continue;
                     let d = Math.hypot(ent.x - this.x, ent.y - this.y);
-                    let minDist = this.radius + ent.radius + 30;
+                    let minDist = this.radius + ent.radius + 6;
+
                     if (d < minDist) {
-                        let push = (minDist - d) * 0.5; let ang = Math.atan2(this.y - ent.y, this.x - ent.x);
-                        this.x += Math.cos(ang) * push; this.y += Math.sin(ang) * push;
+                        if (d === 0) {
+                            let randAng = Math.random() * Math.PI * 2;
+                            this.x += Math.cos(randAng) * 8; this.y += Math.sin(randAng) * 8;
+                            continue;
+                        }
+                        let overlap = minDist - d;
+                        let ang = Math.atan2(this.y - ent.y, this.x - ent.x);
+                        this.x += Math.cos(ang) * overlap * 0.55;
+                        this.y += Math.sin(ang) * overlap * 0.55;
                     }
                 }
 
@@ -284,7 +292,6 @@
                     }
                 }
 
-                // 大幅度閃避動作與瞬移
                 if (targetProj) {
                     if (this.type === 'jindan' && this.teleportCharges > 0 && Math.random() < 0.15) {
                         this.x = Math.random() * (canvas.width - 300) + 150; this.y = Math.random() * (canvas.height - 300) + 150;
@@ -293,7 +300,7 @@
                         addLog(totalSimulatedTime, `🌌 [瞬移] 金丹大能(ID:${this.id}) 遁入虛空改寫因果！`);
                         triggerBulletTime(0.4);
                     } else {
-                        this.isDodging = true; // 大幅度閃避狀態觸發
+                        this.isDodging = true;
                         let angP = Math.atan2(this.y - targetProj.y, this.x - targetProj.x) + (Math.PI / 1.8) * this.orbitDirection;
                         this.x += Math.cos(angP) * finalSpeed * dt; this.y += Math.sin(angP) * finalSpeed * dt;
                     }
@@ -303,19 +310,34 @@
                     if (enemy) {
                         let ang = Math.atan2(enemy.y - this.y, enemy.x - this.x);
                         let dist = Math.hypot(enemy.x - this.x, enemy.y - this.y);
-                        let moveAngle = dist < conf.range * 0.4 ? ang + (Math.PI / 2) * this.orbitDirection : ang;
-                        this.x += Math.cos(moveAngle) * finalSpeed * dt; this.y += Math.sin(moveAngle) * finalSpeed * dt;
+                        
+                        let moveAngle = ang;
+                        if (dist < conf.range * 0.4) {
+                            moveAngle = ang + (Math.PI / 2) * this.orbitDirection;
+                        } else {
+                            if (this.type === 'mortal' || this.type === 'lianqi') {
+                                moveAngle = ang + Math.sin(this.id * 15 + totalSimulatedTime * 2) * 0.25;
+                            }
+                        }
+                        this.x += Math.cos(moveAngle) * finalSpeed * dt; 
+                        this.y += Math.sin(moveAngle) * finalSpeed * dt;
                     }
                 }
 
-                // 建築物實體障礙碰撞
+                // 滑牆軸向擠出碰撞
                 for (let b of buildings) {
-                    let closestX = Math.max(b.x, Math.min(this.x, b.x + b.w));
-                    let closestY = Math.max(b.y, Math.min(this.y, b.y + b.h));
-                    let dX = this.x - closestX; let dY = this.y - closestY; let distSq = dX * dX + dY * dY;
-                    if (distSq < this.radius * this.radius) {
-                        let dist = Math.sqrt(distSq) || 1; let overlap = this.radius - dist;
-                        this.x += (dX / dist) * overlap; this.y += (dY / dist) * overlap;
+                    let buffer = this.radius;
+                    if (this.x + buffer > b.x && this.x - buffer < b.x + b.w &&
+                        this.y + buffer > b.y && this.y - buffer < b.y + b.h) {
+                        
+                        let overlapL = (this.x + buffer) - b.x; let overlapR = (b.x + b.w) - (this.x - buffer);
+                        let overlapT = (this.y + buffer) - b.y; let overlapB = (b.y + b.h) - (this.y - buffer);
+                        
+                        let minOverlap = Math.min(overlapL, overlapR, overlapT, overlapB);
+                        if (minOverlap === overlapL) this.x -= overlapL;
+                        else if (minOverlap === overlapR) this.x += overlapR;
+                        else if (minOverlap === overlapT) this.y -= overlapT;
+                        else if (minOverlap === overlapB) this.y += overlapB;
                     }
                 }
 
@@ -346,7 +368,6 @@
                 if (this.type === 'mortal') {
                     target.takeDamage(conf.dmg, 0, 1, this);
                 } 
-                // 煉氣修士技能回歸
                 else if (this.type === 'lianqi') {
                     let isSword = Math.random() > 0.5;
                     projectiles.push({
@@ -356,18 +377,15 @@
                         fuseRadius: conf.fuseRadius, blastRadius: isSword ? 10 : conf.blastRadius, mode: isSword ? 'sword' : 'fireball'
                     });
                 } 
-                // 築基大修技能回歸
                 else if (this.type === 'zhuji') {
                     let isThunder = Math.random() > 0.6;
                     if (isThunder) {
-                        // 天基神雷：從頂部高空砸下的極速雷霆
                         projectiles.push({
                             x: target.x + (Math.random()-0.5)*30, y: 0, vx: 0, vy: conf.spellSpeed * 1.8,
                             damage: conf.dmg * 1.5, color: '#bf00ff', radius: 7, attackerId: this.id, attackerType: this.type, attackerTeam: this.team,
                             fuseRadius: conf.fuseRadius + 20, blastRadius: conf.blastRadius * 1.3, mode: 'thunder'
                         });
                     } else {
-                        // 真元巨弩
                         projectiles.push({
                             x: this.x, y: this.y, vx: Math.cos(ang) * conf.spellSpeed, vy: Math.sin(ang) * conf.spellSpeed,
                             damage: conf.dmg, color: '#ff33cc', radius: 6, attackerId: this.id, attackerType: this.type, attackerTeam: this.team,
@@ -375,7 +393,6 @@
                         });
                     }
                 }
-                // 金丹大能至高法規
                 else if (this.type === 'jindan') {
                     let count = Math.floor(Math.random() * 10) + 8;
                     addLog(totalSimulatedTime, `🪐 [萬法齊發] 金丹大能(ID:${this.id}) 傾瀉萬重法力彈幕！`);
@@ -420,7 +437,6 @@
             }
 
             draw() {
-                // 渲染大幅度動作下的空間碎裂殘影
                 for (let t of this.trail) {
                     ctx.beginPath(); ctx.arc(t.x, t.y, this.radius, 0, Math.PI * 2);
                     ctx.fillStyle = `rgba(0, 255, 204, ${t.alpha * 0.25})`; ctx.fill();
@@ -440,12 +456,46 @@
             }
         }
 
+        // 【修改：爆炸震盪時，同步計算並扣除建築物生命值，歸零則觸發炸碎特效】
         function triggerExplosion(x, y, blastRadius, maxDamage, attacker) {
             particles.push({ x: x, y: y, r: 5, maxR: blastRadius, type: attacker.attackerType, mode: attacker.mode, isWave: true });
+            
+            // 損害修士實體
             for (let ent of entities) {
                 if (ent.id === attacker.attackerId) continue; 
                 let dist = Math.hypot(ent.x - x, ent.y - y);
                 if (dist <= blastRadius) ent.takeDamage(maxDamage, dist, blastRadius, attacker, false);
+            }
+
+            // 損害建築物障礙
+            for (let i = buildings.length - 1; i >= 0; i--) {
+                let b = buildings[i];
+                let closestX = Math.max(b.x, Math.min(x, b.x + b.w));
+                let closestY = Math.max(b.y, Math.min(y, b.y + b.h));
+                let dX = x - closestX; let dY = y - closestY;
+                let dist = Math.sqrt(dX * dX + dY * dY);
+
+                if (dist <= blastRadius) {
+                    let falloffDmg = maxDamage * Math.max(0, 1 - (dist / blastRadius));
+                    b.hp -= falloffDmg;
+                    
+                    if (b.hp <= 0) {
+                        addLog(totalSimulatedTime, `🏛️ 【天崩】 ${b.name} 承受不住恐怖法力，徹底崩塌湮滅！`);
+                        // 炸裂成 20 個實體煙塵與碎片粒子
+                        for (let k = 0; k < 20; k++) {
+                            particles.push({
+                                x: b.x + b.w/2 + (Math.random()-0.5)*b.w,
+                                y: b.y + b.h/2 + (Math.random()-0.5)*b.h,
+                                vx: (Math.random()-0.5)*400,
+                                vy: (Math.random()-0.5)*400,
+                                r: Math.random()*5 + 2,
+                                life: 1.2,
+                                isDebris: true
+                            });
+                        }
+                        buildings.splice(i, 1);
+                    }
+                }
             }
         }
 
@@ -500,7 +550,7 @@
             for (let i = 0; i < jCount; i++) { let p = getSafePos(); entities.push(new Entity(globalId++, p.x, p.y, 'jindan', jTeam)); }
 
             gameActive = true;
-            logPanel.innerHTML = `=== 演武大陣聚炁：界域規格 ${finalW}×${finalH}（全螢幕收納無視滾動條），大修技能歸位，開戰！ ===`;
+            logPanel.innerHTML = `=== 演武大陣聚炁：界域規格 ${finalW}×${finalH}，已實施防卡牆與「建築物可毀滅」機制，開戰！ ===`;
         }
 
         function advancePhysicsStep(dt) {
@@ -531,11 +581,15 @@
 
             entities = entities.filter(e => e.bodyAlive);
 
+            // 更新粒子物理 (包含震盪波與碎裂石塊)
             for (let i = particles.length - 1; i >= 0; i--) {
                 let pt = particles[i];
                 if (pt.isWave) {
                     let grow = pt.type === 'jindan' ? 7000 : (pt.mode === 'thunder' ? 9000 : 2200);
                     pt.r += grow * dt; if (pt.r >= pt.maxR) particles.splice(i, 1);
+                } else if (pt.isDebris) {
+                    pt.x += pt.vx * dt; pt.y += pt.vy * dt;
+                    pt.life -= dt * 1.5; if (pt.life <= 0) particles.splice(i, 1);
                 }
             }
 
@@ -570,11 +624,19 @@
                 realTimeDisplay.innerText = totalRealTime.toFixed(2);
             }
 
-            // 1. 建築物繪製
+            // 1. 建築物與血條繪製
             for (let b of buildings) {
                 ctx.fillStyle = "#141424"; ctx.fillRect(b.x, b.y, b.w, b.h);
                 ctx.strokeStyle = "#38385c"; ctx.lineWidth = 2; ctx.strokeRect(b.x, b.y, b.w, b.h);
                 ctx.strokeStyle = "rgba(0, 255, 204, 0.12)"; ctx.strokeRect(b.x + 5, b.y + 5, b.w - 10, b.h - 10);
+                
+                // 動態血條
+                if (b.hp < b.maxHp) {
+                    let hbW = b.w * 0.8; let hbX = b.x + (b.w - hbW) / 2; let hbY = b.y + b.h - 12;
+                    ctx.fillStyle = "rgba(30, 30, 40, 0.6)"; ctx.fillRect(hbX, hbY, hbW, 5);
+                    ctx.fillStyle = "#ff3355"; ctx.fillRect(hbX, hbY, hbW * Math.max(0, b.hp / b.maxHp), 5);
+                }
+
                 ctx.fillStyle = "#7171a8"; ctx.font = "bold 13px sans-serif"; ctx.textAlign = "center";
                 ctx.fillText(b.name, b.x + b.w / 2, b.y + b.h / 2 + 5);
             }
@@ -597,17 +659,19 @@
                 ctx.fillStyle = p.color; ctx.fill();
             }
 
-            // 4. 爆炸光波範圍效果
-            for (let i = particles.length - 1; i >= 0; i--) {
-                let pt = particles[i];
+            // 4. 爆炸光波與建築碎屑渲染
+            for (let pt of particles) {
                 if (pt.isWave) {
                     let alpha = Math.max(0, 1 - (pt.r / pt.maxR)); ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.r, 0, Math.PI * 2);
                     ctx.strokeStyle = pt.type === 'jindan' ? `rgba(255, 255, 0, ${alpha * 0.6})` : (pt.mode === 'thunder' ? `rgba(191, 0, 255, ${alpha * 0.7})` : `rgba(255, 51, 204, ${alpha * 0.4})`);
                     ctx.lineWidth = pt.mode === 'thunder' ? 5 : 3; ctx.stroke();
+                } else if (pt.isDebris) {
+                    ctx.fillStyle = `rgba(130, 130, 150, ${Math.max(0, pt.life)})`;
+                    ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.r, 0, Math.PI * 2); ctx.fill();
                 }
             }
 
-            // 5. 浮空大字
+            // 5. 浮空文字
             for (let i = floatingTexts.length - 1; i >= 0; i--) {
                 let ft = floatingTexts[i]; ft.y -= 0.4; ft.life--;
                 if (ft.life <= 0) floatingTexts.splice(i, 1);
